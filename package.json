@@ -1,0 +1,39 @@
+{
+  "name": "symmetrical-memory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteffanBurnette/symmetrical-memory.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteffanBurnette/symmetrical-memory/issues"
+  },
+  "homepage": "https://github.com/SteffanBurnette/symmetrical-memory#readme",
+  "dependencies": {
+    "@googlemaps/extended-component-library": "^0.2.1",
+    "@googlemaps/google-maps-services-js": "^3.3.34",
+    "@googlemaps/js-api-loader": "^1.16.2",
+    "@googlemaps/react-wrapper": "^1.1.35",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "openai": "^3.3.0",
+    "pg": "^8.11.1",
+    "pg-hstore": "^2.3.4",
+    "react-router-dom": "^6.14.2",
+    "sequelize": "^6.32.1",
+    "sequelize-cli": "^6.6.1",
+    "socket.io": "^4.7.1",
+    "sort-by": "^1.2.0",
+    "vite": "^4.4.6"
+  }
+}
