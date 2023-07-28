@@ -28,6 +28,10 @@ body{
     /* display: flex; */
     margin-top: 50px;
     margin-left: 70px;
+    width: 50%; /* Adjust the width as needed */
+    float: left;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .infoparagraph{
@@ -39,4 +43,6 @@ body{
 .imgSection{
     display: flex;
     margin-left: 700px;
+    /* margin-bottom: 700px; */
 }
+
