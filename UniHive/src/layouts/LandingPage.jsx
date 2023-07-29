@@ -3,6 +3,8 @@ import "../styles/landingpage.css";
 import logo from "../images/unihivelogoBLK.png";
 import studentImg from "../images/students.png";
 import Login from "../components/Login";
+import SignUp from "../components/SingnUp";
+
 
 export default function LandingPage() {
   return (
@@ -23,6 +25,7 @@ export default function LandingPage() {
         </p>
         <div>
           <Login />
+          <SignUp/>
         </div>
       </div>
       <div className="imgSection">

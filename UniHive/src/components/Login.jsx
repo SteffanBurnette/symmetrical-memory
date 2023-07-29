@@ -7,12 +7,14 @@ function Login() {
       <Button
         variant="outlined"
         sx={{
-          my: 10,  
+          my: 10,
+          marginRight: 10,
           color: "#FBCB1C",
           borderColor: "#FBCB1C",
           "&:hover": {
-            color: "white",
+            color: "black",
             borderColor: "#FBCB1C",
+            backgroundColor: "#FBCB1C",
           },
         }}
       >
