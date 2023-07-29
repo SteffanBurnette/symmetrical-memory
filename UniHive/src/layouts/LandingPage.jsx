@@ -5,10 +5,9 @@ import studentImg from "../images/studentMeet.png";
 import Login from "../components/Login";
 import SignUp from "../components/SingnUp";
 
-
 export default function LandingPage() {
   return (
-    <>
+    <div>
       <img id="logo" src={logo} alt="logo" />
 
       <div className="infotext">
@@ -23,14 +22,13 @@ export default function LandingPage() {
           meaningful connections, organize in-person meetups, <br />
           and share your valuable insights on courses you've taken.
         </p>
-        <div>
+        
           <Login />
           <SignUp/>
-        </div>
       </div>
       <div className="imgSection">
         <img className="studentImg" src={studentImg} alt="studentImg" />
       </div>
-    </>
+    </div>
   );
 }

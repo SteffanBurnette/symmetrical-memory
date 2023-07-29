@@ -18,19 +18,36 @@ function SignUp() {
     setOpen(false);
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // Accessing the form elements by their id attributes and retrieving their values
+    const fullName = document.getElementById("fullName").value;
+    const college = document.getElementById("college").value;
+    const major = document.getElementById("major").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    
+
+
+  };
+
   return (
     <>
       <Button
         variant="outlined"
-        sx={{
-          my: 10,
-          marginRight: 10,
+        sx={{//styling
+          my: 10,//margin vertical
+          px:8,
+          marginRight: 8,
+          borderWidth: "2px",
           color: "#FBCB1C",
           borderColor: "#FBCB1C",
           "&:hover": {
             color: "black",
             borderColor: "#FBCB1C",
             backgroundColor: "#FBCB1C",
+            borderWidth: "2px",
           },
         }}
         onClick={handleOpen}
@@ -43,6 +60,7 @@ function SignUp() {
         <DialogContent>
           {/* Add your input fields here */}
           <TextField
+            id="fullName"
             label="Full Name"
             variant="outlined"
             fullWidth
@@ -50,6 +68,7 @@ function SignUp() {
           />
 
           <TextField
+            id="college"
             label="College"
             variant="outlined"
             fullWidth
@@ -65,6 +84,7 @@ function SignUp() {
 
           {/* Replace the College Level TextField with the Select component */}
           <TextField
+            id = "collegeLevel"
             select
             label="College Level"
             variant="outlined"
@@ -81,19 +101,30 @@ function SignUp() {
           </TextField>
 
           <TextField
+            id = "major"
             label="Major"
             variant="outlined"
             fullWidth
             margin="normal"
           />
           <TextField
+            id = "email"
             label="Email"
             variant="outlined"
             fullWidth
             margin="normal"
           />
           <TextField
+            id = "password"
             label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            id = "confirmPassword"
+            label="Confirm Password"
             type="password"
             variant="outlined"
             fullWidth
@@ -101,7 +132,7 @@ function SignUp() {
           />
         </DialogContent>
 
-        <Button sx={{ color: "black" }}>Submit</Button>
+        <Button sx={{ color: "black" }} onClick={handleSubmit}>Submit</Button>
       </Dialog>
     </>
   );

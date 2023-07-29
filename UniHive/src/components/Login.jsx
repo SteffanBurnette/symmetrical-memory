@@ -8,13 +8,16 @@ function Login() {
         variant="outlined"
         sx={{
           my: 10,
-          marginRight: 10,
+          px:8,
+          borderWidth: "2px",
+          marginRight: 20,
           color: "#FBCB1C",
           borderColor: "#FBCB1C",
           "&:hover": {
             color: "black",
             borderColor: "#FBCB1C",
             backgroundColor: "#FBCB1C",
+            borderWidth: "2px",
           },
         }}
       >
