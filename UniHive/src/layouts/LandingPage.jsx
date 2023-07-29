@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/landingpage.css";
-import logo from "../images/unihivelogoBLK.png";
-import studentImg from "../images/students.png";
+import logo from "../images/unihiveLogoOff.png";
+import studentImg from "../images/studentMeet.png";
 import Login from "../components/Login";
 import SignUp from "../components/SingnUp";
 

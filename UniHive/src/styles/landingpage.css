@@ -1,5 +1,5 @@
 body{
-    background-color: black;
+    background-color: #1B1D21;
 }
 
 #logo{
@@ -43,6 +43,12 @@ body{
 .imgSection{
     display: flex;
     margin-left: 700px;
+    margin-right: 30px;
+    margin-top: 30px;
     /* margin-bottom: 700px; */
+}
+
+.studentImg{
+    border-radius: 30px;
 }
 
