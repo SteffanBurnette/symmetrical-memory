@@ -1,0 +1,62 @@
+body{
+    background-color: #1B1D21;
+}
+
+#logo{
+    padding-top:10px;
+    width: 250px;
+    height: auto;
+    cursor: pointer;
+
+}
+
+@font-face {
+    font-family: 'Telegraf';
+    src: url('../fonts/telegraf-font.woff2') format('woff2'), /* Replace with actual font file name and format */
+         /* Add more src lines for other font formats if available */
+  }
+  
+.title{
+    color:white;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 70px;
+    /* margin-top: 50px;
+    margin-left: 70px; */
+}
+
+.infotext{
+    /* display: flex; */
+    margin-top: 50px;
+    margin-left: 70px;
+    width: 50%; /* Adjust the width as needed */
+    float: left;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.infoparagraph{
+    font-size: 20px;
+    margin-top: 30px;
+    color: white;
+}
+
+.imgSection{
+    display: flex;
+    margin-left: 700px;
+    margin-right: 30px;
+    margin-top: 30px;
+    /* margin-bottom: 700px; */
+}
+
+.studentImg{
+    border-radius: 100px;
+}
+
+
+
+
+
+
+
+
+
