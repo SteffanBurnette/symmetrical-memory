@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -40,7 +41,7 @@ function SignUp() {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) =>  {
     event.preventDefault();
     // Accessing the form elements by their id attributes and retrieving their values
     const fullName = document.getElementById("fullName").value;
@@ -54,7 +55,38 @@ function SignUp() {
     console.log("College Level:", collegeLevel);
     console.log("Selected College:", selectedCollege);
     console.log("Selected Major:", selectedMajor);
+
+//##########################################################
+
+    // Get the form data from the state
+    const formData = {
+      fullName,
+      email,
+      password,
+      confirmPassword,
+      collegeLevel,
+      selectedCollege,
+      selectedMajor,
+    };
+
+    
+    try {
+      // Send the form data to the backend API endpoint using Axios
+      const response = await axios.post("http://localhost:3010/signup", formData);
+
+      // Log the response from the backend (optional)
+      console.log(response.data);
+
+      // Close the dialog (optional)
+      handleClose();
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show an error message to the user)
+    }
+    
   };
+
+  
 
   return (
     <>

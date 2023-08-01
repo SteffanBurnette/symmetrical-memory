@@ -23,8 +23,10 @@ export default function LandingPage() {
           and share your valuable insights on courses you've taken.
         </p>
         
+        <div>
           <Login />
           <SignUp/>
+          </div>
       </div>
       <div className="imgSection">
         <img className="studentImg" src={studentImg} alt="studentImg" />

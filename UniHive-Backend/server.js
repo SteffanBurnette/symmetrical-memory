@@ -1,9 +1,39 @@
 const express = require("express");
 const cors = require("cors");
 const {User} = require('./models'); 
+const session = require("express-session"); //Might not need to use since were using socket.io
+const http = require("http"); //Socket.io is created upon a http server so this is the recommended way of establishing it
+//We grab the server class from the socket.io libary
+const {Server}=require("socket.io")
+const bcrypt=require("bcrypt");
 require("dotenv").config();
-
 const app = express();
+app.use(express.json());//Allows app to parse JSON bodies
+app.use(cors({ origin: "*", methods: ["GET", "POST"] }));//Sets up cors
+//Creates the http server with express
+const server=http.createServer(app);
+
+
+//The variable that we will be using to do thing with socket.io in our backend
+//We pass our http server and information relating to cors
+const io = new Server(server,{
+    //This is a way to specify all the properties and functionalities that you want with cors
+    //inside of your project
+    cors:{
+        origin:"http://localhost:3010",
+        methods:["GET","POST","PATCH","DELETE"],
+    },
+} );//Since Server is a class we are instanciating a new instance of it
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -16,9 +46,7 @@ app.use((req, res, next) => {
     next();
     
   });
-app.use(express.json());
 
-app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 
 
 
@@ -28,45 +56,21 @@ app.get('/', (req, res) => {
 });
 
 
-// Express code
 
-//app.use(express.json()); // To parse JSON bodies
-
+//SignUp Backend Logic##########################
 app.post("/signup", async (req, res) => {
 
     console.log('Received signup request:', req.body);
-  const { 
-    fullName, 
-    email, 
-    password, 
-    confirmPassword,
-    collegeLevel,
-    selectedCollege,
-    selectedMajor
-  } = req.body;
-
 
   // Input validation
-/*
+ //makes sure that the user inputted the correct confirm password
   if (req.body.password !== req.body.confirmPassword) {
     return res.status(400).json({
       error: 'Passwords do not match'
     });
   }
-*/
 
-  // Create user object
-
-  const user = {
-    name: JSON.stringify(fullName),
-    email: JSON.stringify(email),
-    password: JSON.stringify(password),
-    confirmPassword: JSON.stringify(confirmPassword),
-    collegeLevel:JSON.stringify(collegeLevel), 
-    college: JSON.stringify(selectedCollege),
-    major: JSON.stringify(selectedMajor)
-  };
-
+  //Trys to create  a new user based to the recieved values from the client-side
   try {
 
     // Save user to database
@@ -78,10 +82,11 @@ app.post("/signup", async (req, res) => {
         college: req.body.selectedCollege,
         major: req.body.selectedMajor,
     });
-
+    //Returns console message if the user was successfully created
     res.status(201).json({ message: 'User created!' });
 
   } catch (err) {
+    //Returns an error if the user was not successfully created
     console.error(err);
     res.status(500).json({ error: 'Error creating user' }) 
   }
@@ -91,16 +96,59 @@ app.post("/signup", async (req, res) => {
 
 
 
+//LOGIN Back-End Logic#################################
+
+app.post("/login", async (req, res) => {
+    try {
+      //Finds the user based on the username the client has provided
+      const user = await User.findOne({ where: { name: req.body.username } });
+  
+      //If not username is found then an error will occur
+      if (user === null) {
+        return res.status(401).json({
+          message: "Incorrect credentials"
+        })
+      }
+  
+      //Makes sure that the password the the user entered matches the stored password.
+      if(req.body.password === user.password){
+        
+          // passwords match
+          //Sets the session id to the users id
+          //req.session.userId = user.id;
+
+          //Returns a status message if the user was logged in successfully.
+          res.status(200).json({
+            message: "Logged in successfully",
+            user: {
+              name: user.username,
+              password: user.password
+            }
+          })
+        } else {
+          //Returns ann error if the passwords don't match.
+          return res.status(401).json({
+            message: "Incorrect credentials",
+          });
+        }
+      }//Returns an error if the await did not return a promise.
+     catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "An error occurred during the login process"})
+    }
+});
+  
 
 
 
 
 
-// Start the server
+
+
+//Defines the server port and Starts the server
 const port = 3010;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  //console.log("SERVER IS RUNNING AT "+ app.address().port);
 });
 
 
