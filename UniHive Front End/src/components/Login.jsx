@@ -9,7 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import {io} from "socket.io-client";
 
-const socket=io();
+const socket=io.connect("http://localhost:3010");
 
 function Login() {
 

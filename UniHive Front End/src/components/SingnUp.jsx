@@ -12,7 +12,7 @@ import {io} from "socket.io-client";
 // Sample college and major data from the JSON file
 import collegesData from "../../majors.json";
 
-const socket=io(); //Defines the socket.io variable
+const socket=io.connect("http://localhost:3010"); //Defines the socket.io variable
 
 function SignUp() {
   const [open, setOpen] = useState(false);
