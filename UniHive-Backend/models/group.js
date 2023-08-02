@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.post, { foreignKey: "groupId" }); // Association with Post
+      this.hasMany(models.GroupTag, { foreignKey: "groupId" }); // Association with GroupTag
+      // Additional associations can be added here as needed
     }
   }
   group.init({
@@ -24,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'group',
+    tableName: 'group',
   });
   return group;
 };

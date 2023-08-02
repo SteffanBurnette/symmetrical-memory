@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+//import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -20,6 +22,9 @@ function Login() {
     setOpen(false);
   };
 
+  //const history = useHistory();
+const navigate= useNavigate();
+
 const formData={username, password};
 
   const handleLogin = async () => {
@@ -37,13 +42,17 @@ const formData={username, password};
 
       // Close the dialog (optional)
       handleClose();
+     
     } catch (error) {
       console.error(error);
       // Handle error (e.g., show an error message to the user)
     }
 
-
+   
     handleClose(); // Close the modal after login logic
+     // Redirect to the main page
+     navigate("main");
+    // history.push('/');
   };
 
 

@@ -4,6 +4,9 @@ import logo from "../images/unihiveLogoOff.png";
 import studentImg from "../images/studentMeet.png";
 import Login from "../components/Login";
 import SignUp from "../components/SingnUp";
+import {
+  Outlet
+} from "react-router-dom";
 
 export default function LandingPage() {
   return (
@@ -27,10 +30,14 @@ export default function LandingPage() {
           <Login />
           <SignUp/>
           </div>
+       
       </div>
       <div className="imgSection">
         <img className="studentImg" src={studentImg} alt="studentImg" />
       </div>
+      <main>
+        <Outlet/>
+      </main>
     </div>
   );
 }
