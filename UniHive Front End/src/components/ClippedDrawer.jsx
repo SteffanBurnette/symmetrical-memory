@@ -17,11 +17,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HiveIcon from '@mui/icons-material/Hive';
-import buzzIcon from "../images/buzzChatIcon.png"; 
+import buzzIcon from "../images/ChatIcon.svg"; 
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
-import hivesIcon from "../images/hivesIcon.png"; 
+import hivesIcon from "../images/hivesIcon.svg"; 
 import io from "socket.io-client"; //Used to create connection with backend
-
+import NavB from '../components/NavB';
 
 const drawerWidth = 240;
 
@@ -58,13 +58,7 @@ export default function ClippedDrawer() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: '#1B1D21'}}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Unihive
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <NavB/>
       <Drawer
         variant="permanent"
         sx={{
@@ -82,8 +76,8 @@ export default function ClippedDrawer() {
             {/* Hives */}
             <ListItem disablePadding>
               <ListItemButton onClick={toggleHives}>
-                <ListItemIcon>
-                <img src={hivesIcon} alt="Hives Icon" style={{ width: '20px', height: '26px' }} />
+                <ListItemIcon style={{ width: '24px', height: '24px', transform: 'scale(1.5)' }}>
+                <img src={hivesIcon} alt="Hives Icon" style={{ width: '100%', height: '100%'}} />
                 </ListItemIcon>
                 <ListItemText 
                 primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
@@ -129,8 +123,8 @@ export default function ClippedDrawer() {
             {/* Buzz */}
             <ListItem disablePadding>
               <ListItemButton onClick={toggleBuzz}>
-                <ListItemIcon>
-                <img src={buzzIcon} alt="Buzz Icon" style={{ width: '26px', height: '26px' }} />
+                <ListItemIcon style={{ width: '24px', height: '24px', transform: 'scale(1.5)' }}>
+                <img src={buzzIcon} alt="Buzz Icon" style={{ width: '100%', height: '100%' }} />
                 </ListItemIcon>
                 <ListItemText 
                 primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}

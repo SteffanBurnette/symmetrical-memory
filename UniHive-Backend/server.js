@@ -13,18 +13,21 @@ app.use(cors({ origin: "*", methods: ["GET", "POST"] }));//Sets up cors
 //Creates the http server with express
 const server=http.createServer(app);
 
+//const app = express();
+app.use(
+    cors({
+      origin: ["*"],
+      methods: ["GET", "POST", "PATCH", "DELETE"],
+    })
+  );
 
-//The variable that we will be using to do thing with socket.io in our backend
-//We pass our http server and information relating to cors
-const io = new Server(server,{
-    //This is a way to specify all the properties and functionalities that you want with cors
-    //inside of your project
-    cors:{
-        origin:"http://localhost:3010",
-        methods:["GET","POST","PATCH","DELETE"],
-    },
-} );//Since Server is a class we are instanciating a new instance of it
 
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+  },
+});
 
 //Creates the different namespaces for our sockets
 //A namespace allows us to separate connections so that they can have different functionalities.
@@ -53,7 +56,7 @@ groupChatNamespace.on('connection', socket => {
 */
 
 
-
+/*
 app.use((req, res, next) => {
     console.log(`Request: ${req.method} ${req.originalUrl}`);
     res.on("finish", () => {
@@ -63,14 +66,9 @@ app.use((req, res, next) => {
     next();
     
   });
+*/
 
 
-
-
-// Define a simple route
-app.get('/', (req, res) => {
-  res.send('Hello from the backend!');
-});
 
 
 //Signup backend socket.io logic ########################################
@@ -82,10 +80,9 @@ io.on('connection',(socket)=> {
   // Input validation
  //makes sure that the user inputted the correct confirm password
   if (formData.password !== formData.confirmPassword) {
-    return res.status(400).json({
-      error: 'Passwords do not match'
-    });
-  }
+    console.log('Passwords do not match');
+    };
+  
 
   //Trys to create  a new user based to the recieved values from the client-side
   try {
@@ -100,19 +97,69 @@ io.on('connection',(socket)=> {
         major: formData.selectedMajor,
     });
     //Returns console message if the user was successfully created
-    res.status(201).json({ message: 'User created!' });
+    console.log( 'User created!');
 
   } catch (err) {
     //Returns an error if the user was not successfully created
     console.error(err);
-    res.status(500).json({ error: 'Error creating user' }) 
+   
   }
+  console.log("User connected:", User.name);
+
+  // Assuming you have the user's ID available, you can assign it to the socket object
+  socket.userId = User.name; // Replace "123" with the actual user's ID
 });
+
+//Socket.io LOGIN LOGIC######################################################
+socket.on('login', async (formData) => {
+    try {
+        //Finds the user based on the username the client has provided
+        const user = await User.findOne({ where: { name: formData.username } });
+    
+        //If not username is found then an error will occur
+        if (user === null) {
+          
+            console.log("Incorrect credentials");
+          
+        }
+    
+        //Makes sure that the password the the user entered matches the stored password.
+        if(formData.password === user.password){
+          
+            // passwords match
+            //Sets the session id to the users id
+            //req.session.userId = user.id;
+           
+            //Returns a status message if the user was logged in successfully.
+            console.log("Logged in successfully");
+          } else {
+            //Returns ann error if the passwords don't match.
+            console.log("Incorrect credentials");
+          }
+        }//Returns an error if the await did not return a promise.
+       catch (error) {
+        console.error(error);
+      }
+
+     
+    });
+
+
+    //Need to test how to set the users socket id.
+/*
+    console.log("User connected:", User.name);
+
+    // Assuming you have the user's ID available, you can assign it to the socket object
+    socket.userId = User.name; // Replace "123" with the actual user's ID
+*/
+
+
 });
 
 
 
 
+/*
 //SignUp Backend Logic Axios##########################
 app.post("/signup", async (req, res) => {
 
@@ -150,7 +197,8 @@ app.post("/signup", async (req, res) => {
 
 
 });
-
+*/
+/*
 //Login back end logic using socket.io instead of axios
 io.on('connection',(socket)=> {
 
@@ -194,11 +242,11 @@ io.on('connection',(socket)=> {
           }
         });
     });
-
+*/
 
 
 //LOGIN Back-End Logic#################################
-
+/*
 app.post("/login", async (req, res) => {
     try {
       //Finds the user based on the username the client has provided
@@ -239,9 +287,7 @@ app.post("/login", async (req, res) => {
     }
 });
 
-  
-
-
+  */
 
 
 
@@ -249,8 +295,14 @@ app.post("/login", async (req, res) => {
 
 //Defines the server port and Starts the server
 const port = 3010;
-app.listen(port, () => {
+app.listen(3011, () => {
+    console.log(`Server running on port 3011`);
+    //console.log("SERVER IS RUNNING AT "+ server.address().port);
+  });
+  
+io.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  //console.log("SERVER IS RUNNING AT "+ server.address().port);
 });
 
 
@@ -295,7 +347,7 @@ module.exports = router;
 
 
 
-
+/*
 
 
       const newUser = await User.create({
@@ -308,4 +360,4 @@ module.exports = router;
       course_intrest: formData.course_intrest,
     });
 
-    */
+*/

@@ -9,7 +9,11 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import {io} from "socket.io-client";
 
-const socket=io.connect("http://localhost:3010");
+
+
+
+
+const socket=io("http://localhost:3010");
 
 function Login() {
 
@@ -34,6 +38,7 @@ const formData={username, password};
     // Here you can handle the login logic with the email and password
     console.log("Username:",username);
     console.log("Password:", password);
+
 
 //Sends the formdata to the server when the backend is listening for user login
 socket.emit('login', formData);
