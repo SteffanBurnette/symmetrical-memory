@@ -7,6 +7,9 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
+import {io} from "socket.io-client";
+
+const socket=io();
 
 function Login() {
 
@@ -32,7 +35,13 @@ const formData={username, password};
     console.log("Username:",username);
     console.log("Password:", password);
 
+//Sends the formdata to the server when the backend is listening for user login
+socket.emit('login', formData);
 
+
+
+    //Using axios to communicate with backend
+    /*
     try {
       // Send the form data to the backend API endpoint using Axios
       const response = await axios.post("http://localhost:3010/login", formData);
@@ -47,12 +56,12 @@ const formData={username, password};
       console.error(error);
       // Handle error (e.g., show an error message to the user)
     }
-
+*/
    
     handleClose(); // Close the modal after login logic
-     // Redirect to the main page
+     // Redirect to the main page after credentials are inputted
      navigate("main");
-    // history.push('/');
+    
   };
 
 

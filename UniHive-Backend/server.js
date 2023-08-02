@@ -26,14 +26,31 @@ const io = new Server(server,{
 } );//Since Server is a class we are instanciating a new instance of it
 
 
+//Creates the different namespaces for our sockets
+//A namespace allows us to separate connections so that they can have different functionalities.
+const groupChatNamespace= io.of("/groupchat");
+const directMessageNamespace= io.of("/directMessage");
+const feedNamespace= io.of("/feed");
 
+//group_name is a unique string, allowing for this to be a unique room for the group.  
+//Takes a call back function that will join the room and allow the user to listen for and emit events.
+/*
+groupChatNamespace.on('connection', socket => {
 
+ 
+  //Joins the specified room
+  socket.join(group_name);
 
+   // Listen for chat message
+   socket.on('chatMessage', (msg) => {
+    console.log('Message received: ' + msg);
 
+    // Emit event to same room 
+    chatNamespace.in(group_name).emit('newMessage', msg);
+  });
 
-
-
-
+});
+*/
 
 
 
@@ -56,10 +73,50 @@ app.get('/', (req, res) => {
 });
 
 
+//Signup backend socket.io logic ########################################
+io.on('connection',(socket)=> {
 
-//SignUp Backend Logic##########################
+    socket.on('signup', async (formData) => {
+    console.log('Received signup request:', formData);
+
+  // Input validation
+ //makes sure that the user inputted the correct confirm password
+  if (formData.password !== formData.confirmPassword) {
+    return res.status(400).json({
+      error: 'Passwords do not match'
+    });
+  }
+
+  //Trys to create  a new user based to the recieved values from the client-side
+  try {
+
+    // Save user to database
+        User.create({
+        name: formData.fullName,
+        college_level: formData.collegeLevel,
+        email: formData.email,
+        password: formData.password,
+        college: formData.selectedCollege,
+        major: formData.selectedMajor,
+    });
+    //Returns console message if the user was successfully created
+    res.status(201).json({ message: 'User created!' });
+
+  } catch (err) {
+    //Returns an error if the user was not successfully created
+    console.error(err);
+    res.status(500).json({ error: 'Error creating user' }) 
+  }
+});
+});
+
+
+
+
+//SignUp Backend Logic Axios##########################
 app.post("/signup", async (req, res) => {
 
+    
     console.log('Received signup request:', req.body);
 
   // Input validation
@@ -91,8 +148,52 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ error: 'Error creating user' }) 
   }
 
+
 });
 
+//Login back end logic using socket.io instead of axios
+io.on('connection',(socket)=> {
+
+    socket.on('login', async (formData) => {
+        try {
+            //Finds the user based on the username the client has provided
+            const user = await User.findOne({ where: { name: formData.username } });
+        
+            //If not username is found then an error will occur
+            if (user === null) {
+              return res.status(401).json({
+                message: "Incorrect credentials"
+              })
+            }
+        
+            //Makes sure that the password the the user entered matches the stored password.
+            if(formData.password === user.password){
+              
+                // passwords match
+                //Sets the session id to the users id
+                //req.session.userId = user.id;
+      
+                //Returns a status message if the user was logged in successfully.
+                res.status(200).json({
+                  message: "Logged in successfully",
+                  user: {
+                    name: user.username,
+                    password: user.password
+                  }
+                })
+              } else {
+                //Returns ann error if the passwords don't match.
+                return res.status(401).json({
+                  message: "Incorrect credentials",
+                });
+              }
+            }//Returns an error if the await did not return a promise.
+           catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "An error occurred during the login process"})
+          }
+        });
+    });
 
 
 
@@ -137,6 +238,7 @@ app.post("/login", async (req, res) => {
       res.status(500).json({ message: "An error occurred during the login process"})
     }
 });
+
   
 
 

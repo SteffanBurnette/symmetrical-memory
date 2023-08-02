@@ -17,16 +17,22 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HiveIcon from '@mui/icons-material/Hive';
-//import buzzIcon from "../images/buzzChatIcon.png"; 
+import buzzIcon from "../images/buzzChatIcon.png"; 
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
-//import hivesIcon from "../images/hivesIcon.png"; 
+import hivesIcon from "../images/hivesIcon.png"; 
+import io from "socket.io-client"; //Used to create connection with backend
 
 
 const drawerWidth = 240;
 
+//Establishes a connection to our backend socket server.
+//We can use this to listen to events or emit events.
+const socket= io.connect("http://localhost:3010");
+
 export default function ClippedDrawer() {
   const [showHives, setShowHives] = React.useState(false);
   const [showBuzz, setShowBuzz] = React.useState(false);
+
 
   const toggleHives = () => {
     setShowHives((prev) => !prev);
@@ -43,6 +49,9 @@ export default function ClippedDrawer() {
 
   const handleCreateBuzz = () => {
     // Add logic for the "Create Buzz" button here
+    //Need a modal to pop up to get the values to enter into the database
+    //const form= hiveData;
+
     console.log('Start Buzz clicked');
   };
 

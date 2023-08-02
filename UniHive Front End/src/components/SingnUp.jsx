@@ -7,9 +7,12 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
+import {io} from "socket.io-client";
 
 // Sample college and major data from the JSON file
 import collegesData from "../../majors.json";
+
+const socket=io(); //Defines the socket.io variable
 
 function SignUp() {
   const [open, setOpen] = useState(false);
@@ -45,6 +48,7 @@ function SignUp() {
     setOpen(false);
   };
 
+ 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Accessing the form elements by their id attributes and retrieving their values
@@ -73,6 +77,14 @@ function SignUp() {
       selectedMajor,
     };
 
+
+  //Sends the formdata to the server when the backend is listening for user signup
+  socket.emit('signup', formData);
+  navigate("main");
+
+
+    //Axios used to send data
+/*
     try {
       // Send the form data to the backend API endpoint using Axios
       const response = await axios.post(
@@ -90,6 +102,8 @@ function SignUp() {
       console.error(error);
       // Handle error (e.g., show an error message to the user)
     }
+*/
+
   };
 
   return (
