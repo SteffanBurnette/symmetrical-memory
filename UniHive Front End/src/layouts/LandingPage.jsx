@@ -4,6 +4,7 @@ import logo from "../images/unihiveLogoOff.png";
 import studentImg from "../images/studentMeet.png";
 import Login from "../components/Login";
 import SignUp from "../components/SingnUp";
+import JoinVideoButton from "../components/JoinVideoButton";
 import {
   Outlet
 } from "react-router-dom";
@@ -29,6 +30,7 @@ export default function LandingPage() {
         <div>
           <Login />
           <SignUp/>
+          <JoinVideoButton/>
           </div>
        
       </div>

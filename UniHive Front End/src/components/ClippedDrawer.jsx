@@ -21,17 +21,20 @@ import buzzIcon from "../images/ChatIcon.svg";
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
 import hivesIcon from "../images/hivesIcon.svg"; 
 import io from "socket.io-client"; //Used to create connection with backend
-import NavB from '../components/NavB';
+import ResponsiveAppBar from '../components/NavBar';
+import CreateHive from '../components/CreateHive'; // Import the CreateHive component
+//import ResponsiveAppBar from '../components/NavBar'; mohammads navbar, need the unihive svg
 
 const drawerWidth = 240;
 
 //Establishes a connection to our backend socket server.
 //We can use this to listen to events or emit events.
-const socket= io.connect("http://localhost:3010");
+const socket= io("http://localhost:3010");
 
 export default function ClippedDrawer() {
   const [showHives, setShowHives] = React.useState(false);
   const [showBuzz, setShowBuzz] = React.useState(false);
+  const [showCreateHive, setShowCreateHive] = React.useState(false);
 
 
   const toggleHives = () => {
@@ -45,6 +48,11 @@ export default function ClippedDrawer() {
   const handleCreateHive = () => {
     // Add your logic for the "Create Hive" button here
     console.log('Create Hive clicked');
+    setShowCreateHive(true);
+  };
+  
+  const handleCloseCreateHive = () => {
+    setShowCreateHive(false);
   };
 
   const handleCreateBuzz = () => {
@@ -55,10 +63,12 @@ export default function ClippedDrawer() {
     console.log('Start Buzz clicked');
   };
 
+ 
+    
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <NavB/>
+    
       <Drawer
         variant="permanent"
         sx={{
@@ -67,21 +77,23 @@ export default function ClippedDrawer() {
           [`& .MuiDrawer-paper`]: { 
             width: drawerWidth, 
             boxSizing: 'border-box', 
-            backgroundColor: '#1B1D21', },
+            backgroundColor: '#1B1D21', 
+          },
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: 'auto'}}>
+        <Box sx={{ overflow: 'auto' }}>
           <List>
             {/* Hives */}
             <ListItem disablePadding>
               <ListItemButton onClick={toggleHives}>
                 <ListItemIcon style={{ width: '24px', height: '24px', transform: 'scale(1.5)' }}>
-                <img src={hivesIcon} alt="Hives Icon" style={{ width: '100%', height: '100%'}} />
+                  <img src={hivesIcon} alt="Hives Icon" style={{ width: '100%', height: '100%' }} />
                 </ListItemIcon>
                 <ListItemText 
-                primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
-                primary="Hives"  />
+                  primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
+                  primary="Hives"
+                />
                 {showHives ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItemButton>
             </ListItem>
@@ -92,7 +104,7 @@ export default function ClippedDrawer() {
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleCreateHive}>
                     <ListItemIcon>
-                      <AddCircleIcon sx={{color:'#ecf4ff'}}/>
+                      <AddCircleIcon sx={{ color: '#ecf4ff' }} />
                     </ListItemIcon>
                     <ListItemText primary="Create Hive" />
                   </ListItemButton>
@@ -101,7 +113,7 @@ export default function ClippedDrawer() {
                 <ListItem disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
-                      <HiveIcon sx={{color:'#FBCB1C'}}/>
+                      <HiveIcon sx={{ color: '#FBCB1C' }} />
                     </ListItemIcon>
                     <ListItemText primary="Hive 1" />
                   </ListItemButton>
@@ -110,7 +122,7 @@ export default function ClippedDrawer() {
                 <ListItem disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
-                      <HiveIcon sx={{color:'#FBCB1C'}}/>
+                      <HiveIcon sx={{ color: '#FBCB1C' }} />
                     </ListItemIcon>
                     <ListItemText primary="Hive 2" />
                   </ListItemButton>
@@ -124,11 +136,12 @@ export default function ClippedDrawer() {
             <ListItem disablePadding>
               <ListItemButton onClick={toggleBuzz}>
                 <ListItemIcon style={{ width: '24px', height: '24px', transform: 'scale(1.5)' }}>
-                <img src={buzzIcon} alt="Buzz Icon" style={{ width: '100%', height: '100%' }} />
+                  <img src={buzzIcon} alt="Buzz Icon" style={{ width: '100%', height: '100%' }} />
                 </ListItemIcon>
                 <ListItemText 
-                primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
-                primary="Buzz" />
+                  primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
+                  primary="Buzz"
+                />
                 {showBuzz ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItemButton>
             </ListItem>
@@ -138,8 +151,8 @@ export default function ClippedDrawer() {
                 {/* Create Buzz */}
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleCreateBuzz}>
-                  <ListItemIcon>
-                      <MapsUgcIcon sx={{color:'#ecf4ff'}}/>
+                    <ListItemIcon>
+                      <MapsUgcIcon sx={{ color: '#ecf4ff' }} />
                     </ListItemIcon>
                     <ListItemText primary="Start Buzz" />
                   </ListItemButton>
@@ -176,6 +189,8 @@ export default function ClippedDrawer() {
           Consequat
         </Typography>
       </Box>
+      {/* Render the CreateHive component */}
+      <CreateHive open={showCreateHive} onClose={handleCloseCreateHive} />
     </Box>
   );
 }

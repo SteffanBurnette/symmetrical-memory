@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const {User} = require('./models'); 
+const {User, group} = require('./models'); 
 const session = require("express-session"); //Might not need to use since were using socket.io
 const http = require("http"); //Socket.io is created upon a http server so this is the recommended way of establishing it
 //We grab the server class from the socket.io libary
@@ -56,24 +56,38 @@ groupChatNamespace.on('connection', socket => {
 */
 
 
+
 /*
-app.use((req, res, next) => {
-    console.log(`Request: ${req.method} ${req.originalUrl}`);
-    res.on("finish", () => {
-      // the 'finish' event will be emitted when the response is handed over to the OS
-      console.log(`Response Status: ${res.statusCode}`);
-    });
-    next();
-    
-  });
+//Create groupchat logic
+groupChatNamespace.on("connection",(socket)=>{
+
+   // socket.join("Testgroup");
+
+    socket.on("creategroup", async (formData)=>{
+        console.log('Received create group(hive) request:', formData);
+ 
+        try{
+            await group.create({
+                group_name:formData.hiveName,
+                group_description:formData.hiveDescription,
+                group_college:formData.selectedCollege, 
+                college_major:formData.selectedMajor,
+
+             });
+
+        }catch(e){
+            //Returns error if group was not successfully made.
+            console.error(e);
+        }
+    })
+
+});
 */
-
-
-
 
 //Signup backend socket.io logic ########################################
 io.on('connection',(socket)=> {
 
+    //Sign up form Logic################################
     socket.on('signup', async (formData) => {
     console.log('Received signup request:', formData);
 
@@ -143,6 +157,38 @@ socket.on('login', async (formData) => {
 
      
     });
+
+
+
+
+   //Create Group(Hive) Logic############################
+   //Gets the form data from the modal on the client side and puts that data into the database.
+   socket.on("creategroup", async (formData)=>{
+    console.log('Received create group(hive) request:', formData);
+
+    try{
+          group.create({
+            group_name:formData.hiveName,
+            group_description:formData.hiveDescription,
+            group_college:formData.selectedCollege, 
+            college_major:formData.selectedMajor,
+
+         });
+
+    }catch(e){
+        //Returns error if group was not successfully made.
+        console.error(e);
+    }
+})
+
+
+
+
+
+
+
+
+
 
 
     //Need to test how to set the users socket id.
@@ -304,6 +350,7 @@ io.listen(port, () => {
   console.log(`Server running on port ${port}`);
   //console.log("SERVER IS RUNNING AT "+ server.address().port);
 });
+
 
 
 /*
