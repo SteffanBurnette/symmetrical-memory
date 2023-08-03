@@ -23,8 +23,6 @@ import { createTheme } from '@mui/material/styles';
 import '../styles/NavBar.css'
 
 
-
-const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
