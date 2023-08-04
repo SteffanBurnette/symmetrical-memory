@@ -1,0 +1,14 @@
+.logo-text{
+    font-weight: bold;
+    text-align: center;
+    align-content: center;
+    margin-top: auto;
+    padding-top: 10px;
+}
+@font-face {
+    font-family: 'Horta';
+    src: url(../fonts/Horta.otf) format('otf');
+    /* Add other formats if necessary */
+    font-weight: normal;
+    font-style: normal;
+  }
