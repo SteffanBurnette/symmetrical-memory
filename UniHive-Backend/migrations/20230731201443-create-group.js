@@ -1,46 +1,54 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('groups', {
+    await queryInterface.createTable("groups", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       group_name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       group_description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       group_location: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       college_major: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       group_college: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
-      groupToUser: {
-        type: Sequelize.INTEGER
+      userId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "User",
+          key: "id",
+        },
       },
-      groupToPost: {
-        type: Sequelize.INTEGER
+      postsId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "posts",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('groups');
-  }
+    await queryInterface.dropTable("groups");
+  },
 };

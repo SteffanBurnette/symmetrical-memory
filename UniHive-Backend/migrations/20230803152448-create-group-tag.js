@@ -2,27 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("posts", {
+    await queryInterface.createTable("GroupTag", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      post_content: {
-        type: Sequelize.STRING,
-      },
-      isSwarm: {
-        type: Sequelize.BOOLEAN,
-      },
-      swarmLocation: {
-        type: Sequelize.STRING,
+      groupId: {
+        // Updated to match the model
+        type: Sequelize.INTEGER,
+        references: {
+          model: "groups",
+          key: "id",
+        },
       },
       userId: {
+        // Updated to match the model
         type: Sequelize.INTEGER,
-      },
-      groupId: {
-        type: Sequelize.INTEGER,
+        references: {
+          model: "User",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("posts");
+    await queryInterface.dropTable("GroupTag");
   },
 };

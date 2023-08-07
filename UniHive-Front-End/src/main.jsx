@@ -13,7 +13,8 @@ import {
 import LandingPage from "./layouts/LandingPage";
 import MainPageLayout from "./layouts/MainPageLayout";
 import RootLayout  from "./layouts/RootLayout";
-
+import {dataLoader as HiveLoader }  from "./components/ClippedDrawer";
+//import {postLoader} from "./components/Post";
 
 //Paths 
 /*
@@ -37,7 +38,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<RootLayout/>}>
         <Route path="/" element={<LandingPage/>}></Route>
-      <Route path="main" element={<MainPageLayout/>}></Route>
+      <Route path="main" element={<MainPageLayout/>} loader={HiveLoader}  ></Route>
      
     </Route>
   )

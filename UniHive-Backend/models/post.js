@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class post extends Model {
     /**
@@ -11,23 +9,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-       // define association here
-       this.hasMany(models.post, { foreignKey: "groupId" }); // Association with Post
-       this.hasMany(models.GroupTag, { foreignKey: "groupId" }); // Association with GroupTag
-       // Additional associations can be added here as needed
+      this.hasMany(models.comment, { foreignKey: "postId" });
     }
   }
-  post.init({
-    post_content: DataTypes.STRING,
-    isSwarm: DataTypes.BOOLEAN,
-    swarmLocation: DataTypes.STRING,
-    userId: DataTypes.INTEGER,
-    groupId: DataTypes.INTEGER,
-    commentId: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'post',
-    tableName:'post',
-  });
+  post.init(
+    {
+      post_content: DataTypes.STRING,
+      isSwarm: DataTypes.BOOLEAN,
+      swarmLocation: DataTypes.STRING,
+      userId: DataTypes.INTEGER,
+      groupId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "post",
+      tableName: "posts",
+    }
+  );
   return post;
 };
