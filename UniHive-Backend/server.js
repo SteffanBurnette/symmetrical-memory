@@ -374,12 +374,16 @@ socket.on("selectedBuzz", async (data)=>{
 socket.on("directmsg",async (msg)=>{ 
   console.log("CurrentUser ID: "+ currentUser.id +" Reciever Id "+ recID);
   console.log("This is the direct msg data: "+msg);
+  const [senderId, receiverId] = 
+  currentUser.id < recID 
+    ? [currentUser.id, recID]
+    : [recID, currentUser.id];
   await message.create({
-  senderId:currentUser.id,
-  receiverId:recID,
+  senderId:senderId,
+  receiverId:receiverId,
   content:msg
  })
- currentMessage= await message.findAll({where:{senderId:currentUser.id,receiverId:recID}});
+ currentMessage= await message.findAll({where:{senderId:senderId,receiverId:receiverId}});
  socket.emit("conversation",currentMessage);
 }) 
 
