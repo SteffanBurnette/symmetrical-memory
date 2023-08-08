@@ -19,6 +19,8 @@ import { Avatar } from '@mui/material';
 import CommentBox from './CommentPost';
 import CommentPost from './CommentPost';
 import ChatIcon from '../assets/ChatIcon.png';
+import Box from '@mui/material/Box';
+import EmojiNatureTwoToneIcon from '@mui/icons-material/EmojiNatureTwoTone';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -33,6 +35,7 @@ const ExpandMore = styled((props) => {
 
 export default function RecipeReviewCard() {
   const [expanded, setExpanded] = React.useState(false);
+  const [count, setCount] = React.useState(0)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -49,7 +52,8 @@ export default function RecipeReviewCard() {
     marginLeft:'100px'
   }}
 >
-    <Card sx={{ maxWidth: 345, }}>
+  
+    <Card sx={{ maxWidth: '500px'}}>
       <CardHeader
         avatar={
         //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -80,7 +84,8 @@ export default function RecipeReviewCard() {
       </CardContent>
       {/* <CardActions disableSpacing> */}
         <IconButton aria-label="Like">
-          <FavoriteIcon />
+        <EmojiNatureTwoToneIcon onClick={() => setCount((count) => count + 1)}/>
+        {count}
         </IconButton>
        {/* <ExpandMore>
        <img
@@ -117,6 +122,7 @@ export default function RecipeReviewCard() {
       </Collapse>
       {/* </CardActions> */}
     </Card>
+    
 </Toolbar>
   );
 }

@@ -18,7 +18,8 @@ import Discover from '../assets/Discover.svg';
 import Faqs from '../assets/Faqs.svg';
 import Swarms from '../assets/Swarms.svg';
 import { createTheme } from '@mui/material/styles';
-
+import LiveSearch from './LiveSearch';
+import { useMediaQuery } from '@mui/material';
 
 import '../styles/NavBar.css';
 
@@ -44,6 +45,14 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+  const isMediumScreen = useMediaQuery('(min-width: 768px)'); // Adjust the breakpoint as needed
+  const [showLiveSearch, setShowLiveSearch] = useState(false);
+
+  const handleDiscoverClick = () => {
+    if (isMediumScreen) {
+      setShowLiveSearch(!showLiveSearch);
+    }
   };
 
   return (
@@ -125,17 +134,26 @@ function ResponsiveAppBar() {
             }}
           >
             UNIHIVE
+
+            <img
+           src={Logo}
+           alt="Logo"
+           style={{ width: '150px', height: 'auto', marginLeft: '-35px' }}
+            />
              
             {/* <Typography className="logo-text"variant="h1" fontSize="30px"  fontFamily="YourCustomFont" sx={{ml:50, marginBottom:''}}>
                 
             </Typography>        */}
-          
+        
           </Typography>
-          <img
-           src={Logo}
-           alt="Logo"
-           style={{ width: '150px', height: 'auto', marginLeft: '-35px' }}
-            />    
+          <Box sx={{
+    display: 'flex',
+    justifyContent: 'flex-end', // Align content to the right
+    flexDirection: 'row-reverse', // Reverse the order of items
+    alignItems: 'center', // Vertically align items
+    // Add other styling properties if needed
+  }}>
+              
           <Typography
             variant="h6"
             noWrap
@@ -164,12 +182,18 @@ function ResponsiveAppBar() {
             style={{ display: { xs: 'none', md: 'flex' },width: '80px', height: 'auto',}} 
             
           />  
-          <img
+            <div onClick={handleDiscoverClick}>
+            <img
             src={Discover}
             alt="Discover"
             style={{ display: { xs: 'none', md: 'flex' },width: '105px', height: 'auto',}} 
-            
-          />
+          />    
+                  {showLiveSearch && <LiveSearch />}
+        
+          </div>
+
+
+
 
           <img
             src={Faqs}
@@ -178,6 +202,7 @@ function ResponsiveAppBar() {
             
           />  
           </Typography>
+          </Box>
           
           
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

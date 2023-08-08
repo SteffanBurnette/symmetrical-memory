@@ -10,7 +10,7 @@ import {VideoPlayer} from "./VideoPlayer";
 
 const APP_ID="89e81fddd6d6426e91fefdb00a495f13";
 //The ID of the project on agora.
-const TOKEN="007eJxTYPD2MeVVXT/XxvLJ2a4VDLULne5p1z1NlP3ZcrjduHu2U6YCg4VlqoVhWkpKilmKmYmRWaqlYVpqWkqSgUGiiaVpmqFx7ddTKQ2BjAzWMZ5MjAwQCOKzM4TmZXpklqUyMAAAcaEgEQ=="; 
+const TOKEN="007eJxTYDheZt8Vo7pi9hwXGYFvh+8t0+5tNRFb/9p+3Sct55PL2j4rMFhYploYpqWkpJilmJkYmaVaGqalpqUkGRgkmliaphkal7BeTGkIZGQw3BjLzMgAgSA+O0NoXqZHZlkqAwMA6/khMA=="; 
   //In order for the client to connect to the chat room they need to have a token
 const CHANNEL="UniHive";
 //The name of the channel
@@ -46,7 +46,7 @@ export const VideoRoom=()=>{
         }
 
         if(mediaType==="audio"){
-           // user.audioTrack.play();
+           user.audioTrack.play();
 
           
 
@@ -61,6 +61,7 @@ export const VideoRoom=()=>{
          setUsers((previousUsers)=>
          previousUsers.filter((u)=>u.uid !== user.uid)
          );
+
 
     };
 
