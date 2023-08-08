@@ -20,6 +20,7 @@ import { Avatar } from '@mui/material';
 import CommentPost from '../components/CommentPost';
 import ChatIcon from '../assets/ChatIcon.png'; 
 import io from "socket.io-client";
+import EmojiNatureTwoToneIcon from '@mui/icons-material/EmojiNatureTwoTone';
 
 
 const socket= io("http://localhost:3010");
@@ -54,39 +55,41 @@ export const postLoader = async () => {
 export default function RecipeReviewCard() {
   const [expanded, setExpanded] = React.useState(false);
   const [postdata, setPostData]=React.useState([]); //[genericCard]
-  
+  const [postform, setPostForm]=React.useState(''); //[genericCard]
+  const [count, setCount] = React.useState(0)
+
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+    //socket.emit("clickedPost",postId);//Emits the id of the currently clicked post
+    socket.emit("getPostComments");
   };
 
- 
+  
 
    React.useEffect(()=>{
      socket.on("getHivePost", (data) => {
       try {
       
-        setPostData(data); // Update state using setPostData
+        if(postdata!==data){
+        setPostData(data);} // Update state using setPostData
         //setLoading(false); // Set loading to false once data is received
        // socket.emit("test",data);
       } catch (error) {
         console.error("Error updating postdata:", error);
       }
     });
-  }, []);
+  }, [postdata]); //postform caused to many rerenders, need to experiment
  
 
 
 //const thePostsData=postdata;
 
 
-let i=-1;
 
 
 return (
   <div>
-
-
 
   {postdata.map((post)=>{ 
    
@@ -134,7 +137,10 @@ sx={{
     </CardContent>
     {/* <CardActions disableSpacing> */}
       <IconButton aria-label="Like">
-        <FavoriteIcon />
+      
+        <EmojiNatureTwoToneIcon onClick={() => setCount((count) => count + 1)}/>
+        {count}
+        
       </IconButton>
      {/* <ExpandMore>
      <img
@@ -162,7 +168,7 @@ sx={{
       
     <Collapse in={expanded} timeout="auto" unmountOnExit>
       <CardContent>
-        <Typography paragraph><CommentPost/></Typography>
+        <Typography paragraph><CommentPost postId={post.id}/></Typography>
         {/* <AvatarLogo/>
         <Typography paragraph >
           Test

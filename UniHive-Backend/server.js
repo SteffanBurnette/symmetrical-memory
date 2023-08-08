@@ -92,6 +92,8 @@ let currentGrouptag=null;
 let currentComment=null;
 let currentMessage=null;
 let clickedhive=0;
+let thereceiver;
+let recID;
 /*
 //Create groupchat logic
 groupChatNamespace.on("connection",(socket)=>{
@@ -116,8 +118,24 @@ io.use(sharedSession(sessionMiddleware, {
     autoSave: true, // Automatically save session on socket request
   })); //Gives socket.io access to the express session
 
+  groupChatNamespace.use(sharedSession(sessionMiddleware, {
+    autoSave: true, // Automatically save session on socket request
+  })); 
+
+  groupChatNamespace.on('connection', (socket=>{
+
+    /////////////////CREATE COMMENT/////////////////////////
+/*
+let postId;
+socket.on("clickedPost", (data)=>{
+     postId= data; //Wats for the data to be returned
+})
+*/
+//Listens for the createComment event:
 
 
+
+  }))
 
 io.on('connection',(socket)=> {
 //Sign up form Logic######################################################################
@@ -276,19 +294,7 @@ app.get('/api/data', async (req, res) => {
 });
 
 
-/*
-app.get("/api/group/:groupId/posts", async (req, res) => {
-  const groupId = req.params.groupId;
-  try {
-    const groupPosts = await post.findAll({ where: { groupId:groupId } });
-    res.status(200).json(groupPosts);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-    console.error(error.message);
-  }
-});
 
-*/  
 
 //////////////////REturns the id of the hive clicked/////////////////////
 //We can now use it to get the posts of the hive clicked
@@ -310,18 +316,90 @@ socket.on("hiveclicked",async (data)=>{
      .catch((error) => {
        console.log(error);
      });
-    /*
-    //Gets all the posts of the current hive
-    const postgroup = await post.findAll({ where: { groupId: clickedhive } });
-    currentPost=postgroup;
-    console.log(postgroup);
-    io.emit("getHivePost",postgroup); //Sends all the found post to the getHivePost listener
-    console.log("Emit Triggered?")
-    */
+    
   }catch(e){
         console.log(e);
   }
 }) 
+
+/////////////////CREATE COMMENT/////////////////////////
+socket.on("createComment",(data)=>{
+  console.log("This is the comment data"+ data);
+        comment.create({
+          content:data.text,
+          postId:data.pid.postId
+        })
+
+});  
+
+/////////////////Get COMMENTS/////////////////////////
+//let allComments;
+let groupostids;
+socket.on("getPostComments",async ()=>{
+  groupostids=await post.findAll({where:{groupId:clickedhive}})
+  //Gets all the comments of the clicked hive
+
+  const allComments = [];
+
+  // Fetch comments for each post
+  for (const postObj of groupostids) {
+    const comments = await comment.findAll({ where: { postId: postObj.id } });
+    allComments.push(...comments);
+  }
+   // allComments=await comment.findAll({where:{postId:groupostids.id}})
+
+   socket.broadcast.emit("receivePostComments",allComments);  //emits the comments after the promise is finish executing
+   console.log(allComments);
+})
+
+
+//////////////Creates a message table when the user selects buzz//////////////
+
+socket.on("selectedBuzz", async (data)=>{
+  console.log("This is the selected user Data:"+data);
+   thereceiver =await User.findOne({where:{name:data.name}});
+   recID=thereceiver.id;
+   console.log(thereceiver.id);
+ // const getmsgtbl= await message.findOne({where:{senderId:currentUser.id,receiverId:receiver.id }})
+  //if(getmsgtbl==null){
+    
+ // }
+})
+
+//Allws two users to communicate and displays previous messages
+socket.on("directmsg",async (msg)=>{ 
+  console.log("CurrentUser ID: "+ currentUser.id +" Reciever Id "+ recID);
+  console.log("This is the direct msg data: "+msg);
+  await message.create({
+  senderId:currentUser.id,
+  receiverId:recID,
+  content:msg
+ })
+ currentMessage= await message.findAll({where:{senderId:currentUser.id,receiverId:recID}});
+ socket.emit("conversation",currentMessage);
+}) 
+
+
+
+
+
+////////////Get All Users//////////////////////
+app.get("/users", async (req, res) => {
+  try {
+    const allusers = await User.findAll();
+    res.status(200).json(allusers);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
 
 
 

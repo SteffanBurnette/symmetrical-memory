@@ -9,8 +9,11 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:3010");
 
+
 function CreatePost({ open, onClose }) {
+     const [onToggle, setOnToggle]=useState(false);
     const [postContent, setPostContent] = useState('');
+    
   
     const handleClose = () => {
       onClose();
@@ -26,6 +29,11 @@ function CreatePost({ open, onClose }) {
   
       handleClose();
     };
+
+
+    /*export function getToggle(){
+        return onToggle;
+    }*/
   
     return (
       <Dialog open={open} onClose={handleClose} maxWidth="xs">

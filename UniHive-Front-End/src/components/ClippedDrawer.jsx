@@ -29,6 +29,7 @@ import RecipeReviewCard from "../components/Post";
 import Button from "@mui/material/Button";
   import CreatePost from '../components/CreatePost'
   import EditNoteIcon from "@mui/icons-material/EditNote";
+  import StartBuzz from "../components/StartBuzz";
 const drawerWidth = 240;
 
 
@@ -64,7 +65,17 @@ export default function ClippedDrawer() {
   const [postContent, setPostContent] = React.useState('');
   const [clickedId, setClickedId] = React.useState();
   //const [showCreatePost, setShowCreatePost] = React.useState(false);
-
+  const [showStartBuzz, setShowStartBuzz] = React.useState(false);
+  //create buzz
+    const handleStartBuzz = () => {
+      setShowStartBuzz(true);
+      console.log("Start Buzz clicked");
+    };
+    //const loaderData = useLoaderData();
+  
+    const handleCloseStartBuzz = () => {
+      setShowStartBuzz(false);
+    };
 
   React.useEffect(() => {
     async function fetchData() {
@@ -122,6 +133,7 @@ const handleHiveClick = async (id) => {
   }*/
    socket.emit("hiveclicked",clickedId);
    socket.emit("getHivePost");
+  // socket.emit("getPostComments"); //Used to get the comments of a specific post
 };
 
  
@@ -248,17 +260,17 @@ const handleCloseCreatePost = () => {
             </ListItemButton>
           </ListItem>
           {/* Nested Buzz */}
-          {showBuzz && (
-            <List component="div" disablePadding>
-              {/* Create Buzz */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={handleCreateBuzz}>
-                  <ListItemIcon>
-                    <MapsUgcIcon sx={{ color: "#ECF4FF" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Start Buzz" />
-                </ListItemButton>
-              </ListItem>
+            {showBuzz && (
+              <List component="div" disablePadding>
+                {/* Create Buzz */}
+                <ListItem disablePadding>
+                  <ListItemButton onClick={handleStartBuzz}>
+                    <ListItemIcon>
+                      <MapsUgcIcon sx={{ color: "#ECF4FF" }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Start Buzz" />
+                  </ListItemButton>
+                </ListItem>
               {/* Buzz 1 */}
               <ListItem disablePadding>
                 <ListItemButton>
@@ -282,11 +294,7 @@ const handleCloseCreatePost = () => {
         </List>
       </Box>
     </Drawer>
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-      <Toolbar />
-      <Typography paragraph>Lorem ipsum</Typography>
-      <Typography paragraph>Consequat</Typography>
-    </Box>
+   
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
      
@@ -303,6 +311,7 @@ const handleCloseCreatePost = () => {
     {/* Render the CreateHive component */}
     <CreateHive open={showCreateHive} onClose={handleCloseCreateHive} />
     <CreatePost open={showCreatePost} onClose={handleCloseCreatePost}/>
+    <StartBuzz open={showStartBuzz} onClose={handleCloseStartBuzz} />
   </Box>
   );
 }

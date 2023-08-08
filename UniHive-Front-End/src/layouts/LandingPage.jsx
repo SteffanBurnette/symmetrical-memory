@@ -30,7 +30,6 @@ export default function LandingPage() {
         <div>
           <Login />
           <SignUp/>
-          <JoinVideoButton/>
           </div>
        
       </div>
