@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       group_location: DataTypes.STRING,
       college_major: DataTypes.STRING,
       group_college: DataTypes.STRING,
+      groupToUser: DataTypes.INTEGER,
+      
     },
     {
       sequelize,

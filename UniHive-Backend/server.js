@@ -5,6 +5,7 @@ const { post } = require("./models");
 const { comment } = require("./models");
 const { group } = require("./models");
 const { message } = require("./models");
+const { GroupTag } = require("./models");
 const {
     wrap,
     corsConfig,
@@ -85,7 +86,7 @@ groupChatNamespace.on('connection', socket => {
 });
 */
 //Values used to store the current functionalities
-let currentUser={}; // Initialize currentUser to null // Shared data structure to store active user information
+let currentUser=null; // Initialize currentUser to null // Shared data structure to store active user information
 let currentGroup=null;
 let currentPost=null;
 let currentGrouptag=null;
@@ -181,7 +182,7 @@ socket.on('login', async (formData) => {
         }
         //Makes sure that the password the user entered matches the stored password.
         if(formData.password === user.password){
-            console.log("Logged in successfully" + user.id);
+            console.log("Logged in successfully " + user.id);
         } else {
             //Returns an error if the passwords don't match.
             console.log("Incorrect credentials");
@@ -202,13 +203,16 @@ socket.on("creategroup", async (formData) => {
        console.log('User session data in creategroup event:', currentUser);
         //console.log(sesuser);
         // Create a new group using the user's ID from the session
-       currentGroup= await group.create({
+        console.log(currentUser.id);
+       
+       currentGroup=await group.create({
             group_name: formData.hiveName,
             group_description: formData.hiveDescription,
             group_college: formData.selectedCollege, //currentUser.college
             college_major: formData.selectedMajor, //currentUser.major
             groupToUser: currentUser.id, // Use the user's ID from the session
         });
+        console.log("This is the new group created: "+currentGroup);
         //creates the tag when the table is created
         currentGrouptag=await GroupTag.create({
           groupId: currentGroup.id,
