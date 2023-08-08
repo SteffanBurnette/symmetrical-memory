@@ -30,6 +30,7 @@ const ExpandMore = styled((props) => {
 
 export default function RecipeReviewCard() {
   const [expanded, setExpanded] = React.useState(false);
+  const [count, setCount] = React.useState(0);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -44,7 +45,8 @@ export default function RecipeReviewCard() {
     marginTop:'100px'
   }}
 >
-    <Card sx={{ maxWidth: 345, }}>
+    {/* <div style={{ width: '100%', maxWidth: '500px'}}> */}
+    <Card sx={{width:'200%'}}>
       <CardHeader
         avatar={
         //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -71,15 +73,26 @@ export default function RecipeReviewCard() {
       <CardContent>
         <Typography variant="body2" color="text.secondary">
             Testing
+            {/* <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+
+        </button>
+        <FavoriteIcon onClick={() => setCount((count) => count + 1)}/>
+        {count} */}
         </Typography>
       </CardContent>
+      
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+          
+        
+
+ 
+
         </IconButton>
-        <IconButton aria-label="share">
+        {/* <IconButton aria-label="share">
           <ShareIcon />
-        </IconButton>
+        </IconButton> */}
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
@@ -99,6 +112,7 @@ export default function RecipeReviewCard() {
         </CardContent>
       </Collapse>
     </Card>
+    
 </Toolbar>
   );
 }
