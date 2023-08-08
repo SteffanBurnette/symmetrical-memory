@@ -122,75 +122,7 @@ export default function RecipeReviewCard() {
       </Collapse>
       {/* </CardActions> */}
     </Card>
-    <Card sx={{ maxWidth: '500px', margin:10}}>
-      <CardHeader
-        avatar={
-        //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-        //     R
-        //   </Avatar>
-        <AvatarLogo/>
-        }
-        
-
-        // action={
-        //   <IconButton aria-label="settings">
-        //     <MoreVertIcon />
-        //   </IconButton>
-        // }
-        title="Testing"
-        subheader="August 32, 2023"
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image="/src/assets/Logo.svg"
-        alt="Logo"
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-            Testing the caption was successful if you see this
-        </Typography>
-      </CardContent>
-      {/* <CardActions disableSpacing> */}
-        <IconButton aria-label="Like">
-        <EmojiNatureTwoToneIcon onClick={() => setCount((count) => count + 1)}/>
-        {count}
-        </IconButton>
-       {/* <ExpandMore>
-       <img
-            src={ChatIcon}
-            alt="ChatIcon"
-            style={{ display: { xs: 'none', md: 'flex' },width: '95px', height: 'auto',}} 
-            
-          />  
-        </ExpandMore>  */}
-          
-        {/**change this to comment section */}
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-        <img
-            src={ChatIcon}
-            alt="ChatIcon"
-            style={{ display: { xs: 'none', md: 'flex' },width: '95px', height: 'auto',}} 
-            
-          />            
-          </ExpandMore>
-        
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph><CommentPost/></Typography>
-          {/* <AvatarLogo/>
-          <Typography paragraph >
-            Test
-          </Typography> */}
-        </CardContent>
-      </Collapse>
-      {/* </CardActions> */}
-    </Card>
+    
 </Toolbar>
   );
 }
