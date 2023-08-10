@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       college: DataTypes.STRING,
       major: DataTypes.STRING,
       course_intrest: DataTypes.STRING,
+      image: DataTypes.BLOB, 
     },
     {
       sequelize,

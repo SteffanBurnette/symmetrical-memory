@@ -15,7 +15,7 @@ module.exports = {
       name: "custom_fkey_post_to_user",
       references: {
         // Required field
-        table: "User",
+        table: "user",
         field: "id",
       },
       onDelete: "cascade", // or 'restrict', 'set null', 'no action', depending on your needs

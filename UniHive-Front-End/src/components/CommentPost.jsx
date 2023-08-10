@@ -19,7 +19,7 @@ function CommentPost(postId) {
         //event.handleDefault; 
          setNewComment(event.target.value); // Update the new comment state
          };
-         
+
          socket.on("receivePostComments",(data)=>{
             console.log(data);
              setSocketCom(data);
@@ -84,7 +84,7 @@ function CommentPost(postId) {
         <Avatar alt="Remy Sharp" src={imgLink} />
       </Grid>
       <Grid justifyContent="left" item xs zeroMinWidth>
-        <h4 style={{ margin: 0, textAlign: "left" }}>Michel Michel</h4>
+        <h4 style={{ margin: 0, textAlign: "left" }}>Hady M Bah</h4>
         <p style={{ textAlign: "left" }}>{comment.content}</p>
         <p style={{ textAlign: "left", color: "gray" }}>
           posted {comment.createdAt}

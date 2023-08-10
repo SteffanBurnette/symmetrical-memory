@@ -271,24 +271,6 @@ const handleCloseCreatePost = () => {
                     <ListItemText primary="Start Buzz" />
                   </ListItemButton>
                 </ListItem>
-              {/* Buzz 1 */}
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <MailIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Buzz 1" />
-                </ListItemButton>
-              </ListItem>
-              {/* Buzz 2 */}
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <MailIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Buzz 2" />
-                </ListItemButton>
-              </ListItem>
             </List>
           )}
         </List>
