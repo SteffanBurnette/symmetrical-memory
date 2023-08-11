@@ -16,7 +16,9 @@ const http = require("http"); //Socket.io is created upon a http server so this 
 const {Server}=require("socket.io")
 const sharedSession = require('express-socket.io-session'); // Import the package
 const bcrypt=require("bcrypt");
+const { createClient } =require("@supabase/supabase-js"); //Established supabase connection
 require("dotenv").config();
+const cookieParser = require('cookie-parser');
 const app = express();
 app.use(express.json());//Allows app to parse JSON bodies
 app.use(cors({ origin: "*", methods: ["GET", "POST"] }));//Sets up cors
@@ -31,6 +33,7 @@ const sessionMiddleware = session({
       maxAge: 3600000 // 1 hour
     },
   });
+  const cookie = require('cookie');
 app.use(sessionMiddleware);
 app.use(bodyParser.json());
 /*
@@ -39,6 +42,13 @@ app.use(sharedSession(sessionMiddleware, {
   }));
 */
 //const app = express();
+
+//configuring the supabase client, and establishing the connection 
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
+
 app.use(
     cors({
       origin: ["*"],
@@ -53,6 +63,16 @@ const io = new Server(server, {
   },
 });
 
+app.use((req, res, next) => {
+  if (req.session.userId) {
+    // Fetch user data from your database using req.session.userId
+    // Example: req.user = await User.findById(req.session.userId);
+    // Replace the above line with your actual code to fetch user data
+  }
+  next();
+});
+//Allows app to use cookie middleware to store user session
+app.use(cookieParser());
 
 /////////added cookie based authentication for the proteected routes
 const authenticateUser = (req, res, next) => {
@@ -64,6 +84,9 @@ const authenticateUser = (req, res, next) => {
   next();
 };
 
+const getUser=()=>{
+  return currentUser;
+}
 
 
 //Creates the different namespaces for our sockets
@@ -86,12 +109,12 @@ groupChatNamespace.on('connection', socket => {
 });
 */
 //Values used to store the current functionalities
-let currentUser=null; // Initialize currentUser to null // Shared data structure to store active user information
-let currentGroup=null;
+let currentUser; // Initialize currentUser to null // Shared data structure to store active user information
+let currentGroup;
 let currentPost=null;
 let currentGrouptag=null;
 let currentComment=null;
-let currentMessage=null;
+let currentMessage={};
 let clickedhive=0;
 let thereceiver;
 let recID;
@@ -149,6 +172,18 @@ io.on('connection',(socket)=> {
     };
   //Trys to create  a new user based to the recieved values from the client-side
   try {
+
+    
+// Create a new user on the supabase site
+ currentUser = await supabase.from("User").insert({
+  name: formData.fullName,
+  college_level: formData.collegeLevel,
+  email: formData.email,
+  password: formData.password,
+  college: formData.selectedCollege,
+  major: formData.selectedMajor,
+});
+    /*
     // Save user to database
         currentUser = await User.create({
         name: formData.fullName,
@@ -157,7 +192,7 @@ io.on('connection',(socket)=> {
         password: formData.password,
         college: formData.selectedCollege,
         major: formData.selectedMajor,
-    });
+    });*/
    // socket.userId = User.id; //Sets the socket.userId to the Id of the users database
     //Returns console message if the user was successfully created
     console.log( 'User created!');
@@ -165,32 +200,70 @@ io.on('connection',(socket)=> {
     //Returns an error if the user was not successfully created
     console.error(err);
   }
-  console.log("User connected:", User.name);
+  console.log("User connected:", currentUser.name);
   // Assuming you have the user's ID available, you can assign it to the socket object
   //socket.userId = User.id; // Replace "123" with the actual user's ID
 });
 
 //Socket.io LOGIN LOGIC######################################################
+
 socket.on('login', async (formData) => {
+
     try {
         //Finds the user based on the username the client has provided
-        const user = await User.findOne({ where: { name: formData.username } });
-       currentUser = user;  // Store user data in the shared object
+       // const user = await User.findOne({ where: { name: formData.username } });
+       //Finds the user based on the passed in variables
+       const { data, error } = await supabase.from("User").select("*").eq("name", formData.username).single();
+       //console.log("This is the data ", +data);
+   
+        currentUser = data;
+        console.log(currentUser);
+        console.log(currentUser.name);
         //If not username is found then an error will occur
-        if (user === null) {
+        if (currentUser.name === null) {
             console.log("Incorrect credentials");
         }
         //Makes sure that the password the user entered matches the stored password.
-        if(formData.password === user.password){
-            console.log("Logged in successfully " + user.id);
+        if(formData.password === currentUser.password){
+            console.log("Logged in successfully " + currentUser.id);
         } else {
             //Returns an error if the passwords don't match.
             console.log("Incorrect credentials");
         }
+      
     } catch (error) {
         console.error(error);
     }
-});
+    
+    try {
+      // Find all groups that the current user is a member of
+      const { data, error } = await supabase
+      .from("Groups")
+      .select("*")
+      .eq("groupToUser",currentUser.id);
+       console.log(data);
+      currentGroup={
+        id:data.id,
+        group_name:data.group_name,
+        group_description:data.group_description,
+        group_college:data.group_college,
+        group_location:data.group_location,
+        college_major:data.colleg_major,
+        groupToPost:data.groupToPost,
+        groupToUser:data.groupToUser, 
+      }; 
+      //const data = await group.findAll({ where: { groupToUser: currentUser.id } }); // Query the database using your Sequelize model
+     // res.json(datas);
+      console.log("This is the currentGroups "+ currentGroup);
+      socket.emit("loadData", currentGroup);
+  
+    } catch (error) {
+      console.error(error);
+     // res.status(500).json({ error: 'Internal server error' });
+    }
+    
+})
+ 
    //Create Group(Hive) Logic############################
    //Gets the form data from the modal on the client side and puts that data into the database.
 //Create Group(Hive) Logic############################
@@ -204,20 +277,43 @@ socket.on("creategroup", async (formData) => {
         //console.log(sesuser);
         // Create a new group using the user's ID from the session
         console.log(currentUser.id);
-       
+
+        
+ //Creates a group row on supbase       
+const { data, error } = await supabase
+.from('Groups')
+.insert([
+  {  group_name:formData.hiveName,
+    group_description:formData.hiveDescription,
+    group_college:formData.selectedCollege,
+    college_major:formData.selectedMajor,
+    groupToUser:currentUser.id,  },
+])
+.select()
+
+currentGroup={
+  group_name:data.group_name,
+  group_description:data.group_decsription,
+  group_college:data.group_college,
+  college_major:data.colleg_major,
+  groupToUser:currentUser.id,
+
+};
+       /* 
        currentGroup=await group.create({
             group_name: formData.hiveName,
             group_description: formData.hiveDescription,
             group_college: formData.selectedCollege, //currentUser.college
             college_major: formData.selectedMajor, //currentUser.major
             groupToUser: currentUser.id, // Use the user's ID from the session
-        });
-        console.log("This is the new group created: "+currentGroup);
+        });*/
+        console.log("This is the new group created: "+ currentGroup);
         //creates the tag when the table is created
+        /*
         currentGrouptag=await GroupTag.create({
           groupId: currentGroup.id,
           userId: currentUser.id,
-        });
+        });*/
     } catch (e) {
         // Returns error if group was not successfully made.
         console.error(e);
@@ -226,9 +322,43 @@ socket.on("creategroup", async (formData) => {
 
 //Gets all the groups the signed in user is associated with(The Loader)
 app.get('/api/data', async (req, res) => {
+  //req.user=currentUser; 
+  //console.log(req.user);
+ // console.log(currentUser.id);
+ //const user = await loadUser();
+ const {data, error}=await supabase.from("User").select("*").eq("name", "May Winter").single();
+currentUser={
+  id:data.id,
+  name:data.name,
+  password:data.password,
+  email:data.email,
+  college_level:data.college_level,
+  college:data.college,
+  major:data.major, 
+
+};
+ console.log("This is the loader "+ currentUser.email);
+ //console.log(currentUser.id+" "+currentUser.name);
+
     try {
-      const data = await group.findAll({ where: { groupToUser: currentUser.id } }); // Query the database using your Sequelize model
-      res.json(data);
+      // Find all groups that the current user is a member of
+      const { datas, error } = await supabase
+      .from("Groups")
+      .select("*")
+      .eq("groupToUser",currentUser.id);
+    
+      currentGroup={
+        id:datas.id,
+        group_name:datas.group_name,
+        group_description:datas.group_description,
+        group_college:datas.group_college,
+        group_location:datas.group_location,
+        college_major:datas.colleg_major,
+        groupToPost:datas.groupToPost,
+        groupToUser:datas.groupToUser,
+      };
+      //const data = await group.findAll({ where: { groupToUser: currentUser.id } }); // Query the database using your Sequelize model
+      res.json(datas);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
@@ -239,8 +369,20 @@ app.get('/api/data', async (req, res) => {
  // Listen for a request to fetch a single post by ID
  socket.on('getAllPost', async (postID) => {
   try {
-    const postgroup = await group.findAll({ where: { groupToUser: currentUser.id } });
-    const allPost = await post.findAll({ where: { groupId: postgroup.id } });
+    //const postgroup = await group.findAll({ where: { groupToUser: currentUser.id } });
+    
+let { data: Groups, error } = await supabase
+.from('Groups')
+.select("*")
+.eq('groupToUser', currentUser.id);
+
+const postgroup=Groups;
+
+    //const allPost = await post.findAll({ where: { groupId: postgroup.id } });
+    let { data: allPost, err} = await supabase
+    .from('posts')
+    .select('*')
+    .eq('groupId', postgroup.id);
    // currentPost=allPost;
     if (allPost) {
       // Emit the single post data to the client
@@ -361,7 +503,12 @@ socket.on("getPostComments",async ()=>{
 
 socket.on("selectedBuzz", async (data)=>{
   console.log("This is the selected user Data:"+data);
-   thereceiver =await User.findOne({where:{name:data.name}});
+   //thereceiver =await User.findOne({where:{name:data.name}});
+   const { data: receiver, error } = await supabase
+  .from('users')
+  .select('*')
+  .eq('name', data.name)
+  .single();
    recID=thereceiver.id;
    console.log(thereceiver.id);
  // const getmsgtbl= await message.findOne({where:{senderId:currentUser.id,receiverId:receiver.id }})
@@ -378,12 +525,21 @@ socket.on("directmsg",async (msg)=>{
   currentUser.id < recID 
     ? [currentUser.id, recID]
     : [recID, currentUser.id];
-  await message.create({
-  senderId:senderId,
-  receiverId:receiverId,
-  content:msg
- })
- currentMessage= await message.findAll({where:{senderId:senderId,receiverId:receiverId}});
+    const { data: newMessage, error } = await supabase
+    .from('Messages')
+    .insert([
+      {
+        senderId: senderId,
+        receiverId: receiverId,
+        content: msg
+      }
+    ]);
+ //currentMessage= await message.findAll({where:{senderId:senderId,receiverId:receiverId}});
+ const { data: currentMessage, err } = await supabase
+  .from('Messages')
+  .select('*')
+  .filter('senderId', 'eq', senderId)
+  .filter('receiverId', 'eq', receiverId);
  socket.emit("conversation",currentMessage);
 }) 
 
@@ -393,13 +549,25 @@ socket.on("directmsg",async (msg)=>{
 
 ////////////Get All Users//////////////////////
 app.get("/users", async (req, res) => {
+ 
+  try{
+    const { data, error } = await supabase.from("User").select("*");
+
+  const allusers =data;
+  console.log("All users:", allusers);
+  //return allusers; 
+
+  }catch(error){
+    console.error("Error fetching users:", error);
+  }
+  /*
   try {
     const allusers = await User.findAll();
     res.status(200).json(allusers);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: error.message });
-  }
+  }*/
 });
 
 
@@ -744,7 +912,7 @@ app.delete("/messages/:messageId", authenticateUser, async (req, res) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log(currentUser.name+' disconnected');
+    console.log(currentUser.name +' disconnected');
   });
 });
 //Defines the server port and Starts the server

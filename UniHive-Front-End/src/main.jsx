@@ -13,8 +13,8 @@ import {
 import LandingPage from "./layouts/LandingPage";
 import MainPageLayout from "./layouts/MainPageLayout";
 import RootLayout  from "./layouts/RootLayout";
-import {dataLoader as HiveLoader }  from "./components/ClippedDrawer";
-import {userLoader} from "./components/StartBuzz";
+//import {dataLoader as HiveLoader }  from "./components/ClippedDrawer";
+//import {userLoader} from "./components/StartBuzz";
 //import {postLoader} from "./components/Post";
 
 //Paths 
@@ -32,16 +32,8 @@ const router = createBrowserRouter([
 
 
 */
-const loadData = async() => {
-  const hives = await HiveLoader();
-  const user = await userLoader();
 
-  return {
-    hives,
-    user
-  };
 
-};
 
 
 //Constructs the router
@@ -50,7 +42,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<RootLayout/>}>
         <Route path="/" element={<LandingPage/>}></Route>
-      <Route path="main" element={<MainPageLayout/>} loader={loadData}  ></Route>
+      <Route path="main" element={<MainPageLayout/>}  ></Route>
      
     </Route>
   )

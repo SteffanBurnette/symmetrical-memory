@@ -77,6 +77,7 @@ export default function ClippedDrawer() {
       setShowStartBuzz(false);
     };
 
+    /*
   React.useEffect(() => {
     async function fetchData() {
       const loadedData = await dataLoader();
@@ -84,7 +85,7 @@ export default function ClippedDrawer() {
     }
 
     fetchData();
-  }, []);
+  }, []);*/
   
 
 
@@ -154,9 +155,11 @@ const handleCloseCreatePost = () => {
   setShowCreatePost(false);
 };
 
-
+socket.on("loadData", (data)=>{
+    setData(data);
+})
   
- 
+
     
   return (
     <Box sx={{ display: "flex" }}>

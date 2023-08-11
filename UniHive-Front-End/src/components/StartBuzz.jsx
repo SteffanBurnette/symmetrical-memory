@@ -47,6 +47,7 @@ function StartBuzz({ open, onClose }) {
   React.useEffect(() => {
     async function fetchData() {
       const loadedData = await userLoader();
+      console.log(loadedData);
       setBuzzData(loadedData);
     }
 
@@ -62,9 +63,12 @@ function StartBuzz({ open, onClose }) {
     // You can access the selected name using the selectedName state variable
     console.log('Selected Name:', selectedName);
     socket.emit("selectedBuzz",selectedName);
-     socket.on("Buzzname",(data)=>{
-
-     })
+    socket.on("Buzzname", (data) => {
+      // Handle received data here
+      console.log("Received Buzzname data:", data);
+      // Update UI or perform actions based on the data
+    });
+    
     // Perform any other actions or API calls as needed
 
     // Close the modal
