@@ -30,16 +30,19 @@ import Button from "@mui/material/Button";
   import CreatePost from '../components/CreatePost'
   import EditNoteIcon from "@mui/icons-material/EditNote";
   import StartBuzz from "../components/StartBuzz";
+  import { createClient } from '@supabase/supabase-js';
+
 const drawerWidth = 240;
 
 
+//configuring the supabase client, and establishing the connection 
 
 
 
 //Establishes a connection to our backend socket server.
 //We can use this to listen to events or emit events.
 
-
+/*
 export const dataLoader = async () => {
   try {
     const response = await fetch('http://localhost:3011/api/data');
@@ -50,7 +53,7 @@ export const dataLoader = async () => {
   } catch (error) {
     throw new Error('Error fetching data');
   }
-};
+};*/
 
 
 const socket= io("http://localhost:3010");
@@ -78,6 +81,16 @@ export default function ClippedDrawer() {
     };
 
     /*
+  React.useEffect(() => {
+    async function fetchData() {
+      const loadedData = await dataLoader();
+      setData(loadedData);
+    }
+
+    fetchData();
+  }, []);*/
+  
+   /*  
   React.useEffect(() => {
     async function fetchData() {
       const loadedData = await dataLoader();

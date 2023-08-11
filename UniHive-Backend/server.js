@@ -111,10 +111,10 @@ groupChatNamespace.on('connection', socket => {
 //Values used to store the current functionalities
 let currentUser; // Initialize currentUser to null // Shared data structure to store active user information
 let currentGroup;
-let currentPost=null;
+let currentPost;
 let currentGrouptag=null;
-let currentComment=null;
-let currentMessage={};
+let currentComment;
+let currentMessage;
 let clickedhive=0;
 let thereceiver;
 let recID;
@@ -216,8 +216,16 @@ socket.on('login', async (formData) => {
        const { data, error } = await supabase.from("User").select("*").eq("name", formData.username).single();
        //console.log("This is the data ", +data);
    
-        currentUser = data;
-        console.log(currentUser);
+       currentUser={
+        id:data.id,
+        name:data.name,
+        password:data.password,
+        email:data.email,
+        college_level:data.college_level,
+        college:data.college,
+        major:data.major, 
+      };
+        console.log(data);
         console.log(currentUser.name);
         //If not username is found then an error will occur
         if (currentUser.name === null) {
@@ -225,7 +233,7 @@ socket.on('login', async (formData) => {
         }
         //Makes sure that the password the user entered matches the stored password.
         if(formData.password === currentUser.password){
-            console.log("Logged in successfully " + currentUser.id);
+            console.log("Logged in successfully: " + currentUser.id);
         } else {
             //Returns an error if the passwords don't match.
             console.log("Incorrect credentials");
@@ -234,34 +242,51 @@ socket.on('login', async (formData) => {
     } catch (error) {
         console.error(error);
     }
-    
     try {
       // Find all groups that the current user is a member of
       const { data, error } = await supabase
-      .from("Groups")
-      .select("*")
-      .eq("groupToUser",currentUser.id);
-       console.log(data);
-      currentGroup={
-        id:data.id,
-        group_name:data.group_name,
-        group_description:data.group_description,
-        group_college:data.group_college,
-        group_location:data.group_location,
-        college_major:data.colleg_major,
-        groupToPost:data.groupToPost,
-        groupToUser:data.groupToUser, 
-      }; 
+        .from("Groups")
+        .select("*")
+        .eq("groupToUser", currentUser.id);
+    
+      if (error) {
+        console.error("Error fetching data:", error);
+        return;
+      }
+    
+      if (data.length === 0) {
+        console.log("No groups found for the current user.");
+        return;
+      }
+    
+       currentGroup = data; 
+    
+      console.log("This is the currentGroup:", data);
+      socket.broadcast.emit("loadData", currentGroup);
+      //socket.emit("loadData", currentGroup);
+    } catch (error) {
+      console.error("Fetch data error:", error);
+    }
+    
       //const data = await group.findAll({ where: { groupToUser: currentUser.id } }); // Query the database using your Sequelize model
      // res.json(datas);
       console.log("This is the currentGroups "+ currentGroup);
-      socket.emit("loadData", currentGroup);
+      
   
-    } catch (error) {
-      console.error(error);
-     // res.status(500).json({ error: 'Internal server error' });
-    }
+      try{
+        const { data, error } = await supabase.from("User").select("*");
     
+      const allusers =data;
+      console.log("All users:", allusers);
+      //The reason why we are using io here is because The server and client are connected to different namespaces. The emit and on should use the same io instance.
+      io.emit("allUsersForMsg",allusers);
+      //return allusers; 
+    
+      }catch(error){
+        console.error("Error fetching users:", error);
+      }
+    
+     
 })
  
    //Create Group(Hive) Logic############################
@@ -326,6 +351,7 @@ app.get('/api/data', async (req, res) => {
   //console.log(req.user);
  // console.log(currentUser.id);
  //const user = await loadUser();
+ /*
  const {data, error}=await supabase.from("User").select("*").eq("name", "May Winter").single();
 currentUser={
   id:data.id,
@@ -363,6 +389,7 @@ currentUser={
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
     }
+    */
 });
 
 //GETS all POST ##################################################
@@ -400,20 +427,32 @@ const postgroup=Groups;
   socket.on('createPost', async (postData) => {
     console.log(currentUser);
     try {
+      const response = await supabase
+        .from("Posts")
+        .insert({
+          post_content: postData.postContent,
+          userId: currentUser.id,
+          groupId: clickedhive
+        });
+      console.log("Insert successful:", response);
+    } catch (error) {
+      console.error("Insert error:", error);
+    }
+    /*
        post.create({
         post_content: postData.postContent,
        // isSwarm: postData.isSwarm,
         //swarmLocation: postData.swarmLocation,
         userId: currentUser.id,
         groupId: clickedhive,
-      });
+      });  */
 
       // Emit the created post data to the client
       //socket.emit('postCreated', newPost);
-    } catch (error) {
+  
       // Emit an error message if there's an error creating the post
-      socket.emit('postCreationError', { message: error.message });
-    }
+     // socket.emit('postCreationError', { message: error.message });
+    
   });
 
 
@@ -452,100 +491,180 @@ socket.on("hiveclicked",async (data)=>{
 
      // Gets all the posts of the current hive
      //Uses .the to only execute the emit after the posts have been fetched
-     post.findAll({ where: { groupId: clickedhive } })
-     .then((postgroup) => {
-       currentPost = postgroup;
-       console.log(postgroup);
-       io.emit("getHivePost", postgroup); // Sends all the found post to the getHivePost listener
+   /*  post.findAll({ where: { groupId: clickedhive } })
+     .then((postgroup) => {   console.log(data);
+      io.emit("getHivePost", data);}) // Sends all the found post to the getHivePost listener
+      //console.log("Emit Triggered?");
+   
+    .catch((error) => {
+      console.log(error);
+    });*/
+      // currentPost = postgroup;
+       // Use Supabase query to retrieve posts for the clicked hive
+const { data, error } = await supabase
+.from('Posts') 
+.select('*')
+.eq('groupId', clickedhive);
+//Sets the currentpost variable to the recieved data so that we can send it to the user.
+currentPost=data; 
+       console.log(currentPost);
+       if(clickedhive){ 
+        console.log("The socket will be emitted");
+       io.emit("getHivePost", currentPost);
+       } // Sends all the found post to the getHivePost listener
        //console.log("Emit Triggered?");
-     })
-     .catch((error) => {
-       console.log(error);
-     });
     
+ 
   }catch(e){
         console.log(e);
   }
 }) 
 
 /////////////////CREATE COMMENT/////////////////////////
-socket.on("createComment",(data)=>{
-  console.log("This is the comment data"+ data);
-        comment.create({
-          content:data.text,
-          postId:data.pid.postId
-        })
+socket.on("createComment",async (datas)=>{
+  console.log("This is the comment data"+ datas);
+  const { data: newComment, error } = await supabase
+  .from('Comments')
+  .insert({content:datas.text,
+          postId:datas.pid.postId,
+  }
+    );  
 
+if (error) {
+  console.error(error);
+} else {
+  // The newComment variable will hold the created comment
+}
 });  
 
 /////////////////Get COMMENTS/////////////////////////
 //let allComments;
 let groupostids;
 socket.on("getPostComments",async ()=>{
-  groupostids=await post.findAll({where:{groupId:clickedhive}})
+  //groupostids=await post.findAll({where:{groupId:clickedhive}})
+  const { data: groupostids, error } = await supabase
+  .from('Posts')
+  .select('*')
+  .eq('groupId', clickedhive);
+
+if (error) {
+  console.error(error);
+} else {
+  // Now you can work with the groupostids array
+}
   //Gets all the comments of the clicked hive
 
   const allComments = [];
 
+  // Fetch comments for each post
+for (const postObj of groupostids) {
+  // Use Supabase query to retrieve comments for the current post
+  const { data: comments, error } = await supabase
+    .from('Comments')
+    .select('*')
+    .eq('postId', postObj.id);
+
+  if (error) {
+    console.error(error);
+  } else {
+    allComments.push(...comments);
+  }
+}
+
+  
+/*
   // Fetch comments for each post
   for (const postObj of groupostids) {
     const comments = await comment.findAll({ where: { postId: postObj.id } });
     allComments.push(...comments);
   }
    // allComments=await comment.findAll({where:{postId:groupostids.id}})
-
+*/
    socket.broadcast.emit("receivePostComments",allComments);  //emits the comments after the promise is finish executing
    console.log(allComments);
 })
-
+ 
 
 //////////////Creates a message table when the user selects buzz//////////////
 
 socket.on("selectedBuzz", async (data)=>{
-  console.log("This is the selected user Data:"+data);
+  console.log("This is the selected user Data:"+ data.name);
    //thereceiver =await User.findOne({where:{name:data.name}});
    const { data: receiver, error } = await supabase
-  .from('users')
+  .from('User')
   .select('*')
   .eq('name', data.name)
   .single();
-   recID=thereceiver.id;
-   console.log(thereceiver.id);
+
+   recID=data.id;
+   console.log("This is the recivers ID: "+ data.id);
  // const getmsgtbl= await message.findOne({where:{senderId:currentUser.id,receiverId:receiver.id }})
   //if(getmsgtbl==null){
     
- // }
+ // } 
 })
 
-//Allws two users to communicate and displays previous messages
+//Allows two users to communicate and displays previous messages
 socket.on("directmsg",async (msg)=>{ 
+
   console.log("CurrentUser ID: "+ currentUser.id +" Reciever Id "+ recID);
-  console.log("This is the direct msg data: "+msg);
-  const [senderId, receiverId] = 
-  currentUser.id < recID 
+  console.log("This is the direct msg data: "+ msg);
+
+  const [ssenderId, rreceiverId] = 
+  currentUser.id < recID  
     ? [currentUser.id, recID]
     : [recID, currentUser.id];
-    const { data: newMessage, error } = await supabase
-    .from('Messages')
+
+    console.log("The new senderID: "+ssenderId+" The new reciverID "+ rreceiverId);
+   
+    try{ 
+    const { data, error } = await supabase
+    .from("Messages")
     .insert([
-      {
-        senderId: senderId,
-        receiverId: receiverId,
-        content: msg
-      }
+      { senderId: ssenderId,
+        receiverId: rreceiverId,
+        content: msg,
+      }, 
     ]);
+    console.log("Insert successful:", data);
+  } catch (error) {
+    console.error("Insert error:", error);
+  }
+    //console.log(data);
  //currentMessage= await message.findAll({where:{senderId:senderId,receiverId:receiverId}});
+ 
  const { data: currentMessage, err } = await supabase
   .from('Messages')
   .select('*')
-  .filter('senderId', 'eq', senderId)
-  .filter('receiverId', 'eq', receiverId);
+  .eq('senderId', ssenderId)
+  .eq('receiverId', rreceiverId);
+  console.log(currentMessage);
  socket.emit("conversation",currentMessage);
-}) 
+
+}); 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////NORMAL EXPRESS ENDPOINTS//////////////////////////////
 
 ////////////Get All Users//////////////////////
 app.get("/users", async (req, res) => {
@@ -555,12 +674,13 @@ app.get("/users", async (req, res) => {
 
   const allusers =data;
   console.log("All users:", allusers);
+  socket.emit("allUsersFormsg",allusers);
   //return allusers; 
 
   }catch(error){
     console.error("Error fetching users:", error);
   }
-  /*
+  /* 
   try {
     const allusers = await User.findAll();
     res.status(200).json(allusers);

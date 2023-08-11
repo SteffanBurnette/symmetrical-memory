@@ -25,6 +25,7 @@ export const dataLoader = async () => {
   }
 };
 */
+/*
 export const userLoader = async () => {
   try {
     const response = await fetch('http://localhost:3011/users');
@@ -36,23 +37,37 @@ export const userLoader = async () => {
     throw new Error('Error fetching data');
   }
 };
-
+*/
 
 
 function StartBuzz({ open, onClose }) {
   const [selectedName, setSelectedName] = useState(null);
-  const [buzzdata, setBuzzData] = useState(null);
+  const [buzzdata, setBuzzData] = useState([]);
 
-
+/*
   React.useEffect(() => {
     async function fetchData() {
       const loadedData = await userLoader();
       console.log(loadedData);
-      setBuzzData(loadedData);
+      //setBuzzData(loadedData);
     }
 
     fetchData();
   }, []);
+*/
+ 
+React.useEffect(() => {
+
+  socket.on('allUsersForMsg', users => {
+    setBuzzData(users);
+  });
+
+  return () => {
+    socket.off('allUsersForMsg');
+  }
+
+}, []);
+
 
   const handleCloseModal = () => {
     onClose();
@@ -68,7 +83,9 @@ function StartBuzz({ open, onClose }) {
       console.log("Received Buzzname data:", data);
       // Update UI or perform actions based on the data
     });
-    
+    socket.on("allUsersForMsg", (users) => {
+      setBuzzData(users);
+    });
     // Perform any other actions or API calls as needed
 
     // Close the modal

@@ -22,7 +22,7 @@ function ChatBox({ open, onClose }) {
 
       setMessages([...messages, newMessage]);
       console.log(messages+" This is the newMessages: "+newMessage);
-      console.log("This is the socket: "+socket);
+      console.log("This is the socket: "+ socket);
       socket.emit("directmsg",newMessage);//Emits the sent message to the backend
       setNewMessage('');
     }
