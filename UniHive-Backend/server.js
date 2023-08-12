@@ -479,7 +479,7 @@ const postgroup=Groups;
 });
 
 
-
+   
 
 //////////////////REturns the id of the hive clicked/////////////////////
 //We can now use it to get the posts of the hive clicked
@@ -516,7 +516,7 @@ currentPost=data;
     
  
   }catch(e){
-        console.log(e);
+        console.log(e); 
   }
 }) 
 
@@ -643,10 +643,30 @@ socket.on("directmsg",async (msg)=>{
 
 }); 
 
+//////////////////////Gets the initail user chat history//////////////////////////////////////
+/*
+socket.on("getChatHistory",async ()=>{ 
+ 
+  console.log("CurrentUser ID: "+ currentUser.id +" Reciever Id "+ recID);
+  //console.log("This is the direct msg data: "+ msg);
+  
+  const [ssenderId, rreceiverId] = 
+  currentUser.id < recID  
+    ? [currentUser.id, recID]
+    : [recID, currentUser.id];
 
+    console.log("The new senderID: "+ssenderId+" The new reciverID "+ rreceiverId);
 
-
-
+  const { data: currentMessage, err } = await supabase
+  .from('Messages')
+  .select('*')
+  .eq('senderId', ssenderId)
+  .eq('receiverId', rreceiverId);
+  console.log(currentMessage);
+ socket.emit("conversation",currentMessage);
+});
+ 
+*/
 
 
 

@@ -20,6 +20,7 @@ function CreateHive({ open, onClose }) {
   const [selectedCollege, setSelectedCollege] = useState("");
   const [majors, setMajors] = useState([]);
   const [selectedMajor, setSelectedMajor] = useState("");
+  const [form, setForm]=useState();
 
   useEffect(() => {
     // Fetch college data from the JSON file and set it in the state
@@ -34,7 +35,7 @@ function CreateHive({ open, onClose }) {
         setMajors(college.college_Degrees);
       }
     }
-  }, [selectedCollege, colleges]);
+  }, [selectedCollege, colleges, form]);
 
   const handleClose = () => {
     onClose();
@@ -55,6 +56,7 @@ function CreateHive({ open, onClose }) {
     const formData={hiveName, hiveDescription, selectedCollege, selectedMajor};
     // Perform any additional actions or API calls as needed
     //Emits an event to the create group connection
+    setForm(formData); //Trying to have the sidebar rerender when the new group is created
     socket.emit("creategroup",formData);
 
   /*

@@ -8,6 +8,7 @@ import collegesData from "../../majors.json";
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField'; // Import TextField from @mui/material
 import io from "socket.io-client";
+import getMSG from "../components/ChatBox";
 
 //Establishes a connection to our backend socket server.
 //We can use this to listen to events or emit events.
@@ -87,7 +88,7 @@ React.useEffect(() => {
       setBuzzData(users);
     });
     // Perform any other actions or API calls as needed
-
+   // getMSG(); //Supose to render the existing conversation
     // Close the modal
     handleCloseModal();
   };

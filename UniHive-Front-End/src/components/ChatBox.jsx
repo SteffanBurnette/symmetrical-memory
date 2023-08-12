@@ -8,14 +8,23 @@ import io from "socket.io-client";
 
 const socket= io("http://localhost:3010");
 
+
+export const getMSG=()=>{
+    socket.emit("getChatHistory");
+  }
+
 function ChatBox({ open, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loadmsg, setLoadMsg]=useState([]);
 
+
+
+
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
   };
+
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== '') {
@@ -34,10 +43,17 @@ function ChatBox({ open, onClose }) {
     setNewMessage('');
   };
 
+  React.useEffect(()=>{
+    socket.on("conversation",(data)=>{
+        setLoadMsg(data);
+    })
+    return () => socket.off('conversation'); //Closes the connection
+  },[])
+  /*
 socket.on("conversation",(data)=>{
     setLoadMsg(data);
 })
-
+*/
 
   return (
     <Paper style={styles.container} open={open} onClose={handleClose}>

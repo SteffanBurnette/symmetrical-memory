@@ -169,9 +169,10 @@ const handleCloseCreatePost = () => {
 };
 
 socket.on("loadData", (data)=>{
-    setData(data);
+    //setData(data);
+    setData(data); 
 })
-  
+   
 
     
   return (
