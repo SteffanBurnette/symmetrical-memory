@@ -23,6 +23,10 @@ function ChatBox({ open, onClose }) {
 
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
+    socket.emit("getChatHistory");
+    socket.on("conversation",(data)=>{
+        setLoadMsg(data);
+    })
   };
 
 

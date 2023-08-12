@@ -598,6 +598,23 @@ socket.on("selectedBuzz", async (data)=>{
 
    recID=data.id;
    console.log("This is the recivers ID: "+ data.id);
+    
+
+
+  const [ssenderId, rreceiverId] = 
+  currentUser.id < recID  
+    ? [currentUser.id, recID]
+    : [recID, currentUser.id];
+
+    console.log("The new senderID: "+ssenderId+" The new reciverID "+ rreceiverId);
+
+  const { data: currentMessage, err } = await supabase
+  .from('Messages')
+  .select('*')
+  .eq('senderId', ssenderId)
+  .eq('receiverId', rreceiverId);
+  console.log(currentMessage);
+ io.emit("conversation",currentMessage);
  // const getmsgtbl= await message.findOne({where:{senderId:currentUser.id,receiverId:receiver.id }})
   //if(getmsgtbl==null){
     
