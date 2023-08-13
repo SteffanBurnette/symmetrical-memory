@@ -46,10 +46,13 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+
+
+  
   return (
     
-    <AppBar position="static" sx={{backgroundColor:'#1B1D21'}}>
-      <Container maxWidth="xl">
+    <AppBar position="static">
+      <Container maxWidth="xl" sx={{backgroundColor:'#1B1D21'}}>
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, ml: 10 }} /> */}
           {/* <img

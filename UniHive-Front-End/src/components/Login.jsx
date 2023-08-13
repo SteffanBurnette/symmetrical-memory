@@ -106,7 +106,7 @@ socket.emit('login', formData);
           <TextField
             id="username"
             label="Username"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={username}
@@ -117,7 +117,7 @@ socket.emit('login', formData);
             id="password"
             label="Password"
             type="password"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={password}

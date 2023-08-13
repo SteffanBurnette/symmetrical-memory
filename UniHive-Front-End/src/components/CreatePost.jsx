@@ -36,17 +36,18 @@ function CreatePost({ open, onClose }) {
     }*/
   
     return (
-      <Dialog open={open} onClose={handleClose} maxWidth="xs">
+      <Dialog open={open} onClose={handleClose} fullWidth="lg">
         <DialogTitle>Create Post</DialogTitle>
         <DialogContent>
           <TextField
-            label="Post Content"
-            variant="outlined"
-            fullWidth
+            id="standard-textarea"
+            placeholder="Share something!"
+            multiline
+            variant="standard"
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
-            multiline
-            rows={3}
+            rows={10}
+            fullWidth
           />
         </DialogContent>
         <DialogActions>

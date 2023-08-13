@@ -130,7 +130,7 @@ function SignUp() {
           <TextField
             id="fullName"
             label="Full Name"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
           />
@@ -139,7 +139,7 @@ function SignUp() {
             select
             id="college"
             label="College"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={selectedCollege}
@@ -166,7 +166,7 @@ function SignUp() {
             select
             id="major"
             label="Major"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={selectedMajor}
@@ -194,7 +194,7 @@ function SignUp() {
             select
             id="collegeLevel"
             label="College Level"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={collegeLevel}
@@ -219,7 +219,7 @@ function SignUp() {
           <TextField
             id="email"
             label="Email"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
           />
@@ -227,7 +227,7 @@ function SignUp() {
             id="password"
             label="Password"
             type="password"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
           />
@@ -235,7 +235,7 @@ function SignUp() {
             id="confirmPassword"
             label="Confirm Password"
             type="password"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
           />
