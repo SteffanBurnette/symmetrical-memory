@@ -1,42 +1,46 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Toolbar from '@mui/material/Toolbar';
-import AvatarLogo from './AvatarLogo';
-import { Avatar } from '@mui/material';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import { red } from "@mui/material/colors";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ShareIcon from "@mui/icons-material/Share";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Toolbar from "@mui/material/Toolbar";
+import AvatarLogo from "./AvatarLogo";
+import { Avatar } from "@mui/material";
 //import CommentBox from './CommentPost';
-import CommentPost from '../components/CommentPost';
-import ChatIcon from '../assets/ChatIcon.png'; 
+import CommentPost from "../components/CommentPost";
+import ChatIcon from "../assets/ChatIcon.png";
 import io from "socket.io-client";
-import EmojiNatureTwoToneIcon from '@mui/icons-material/EmojiNatureTwoTone';
+import EmojiNatureTwoToneIcon from "@mui/icons-material/EmojiNatureTwoTone";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+//import {BsFillTrashFill} from "react-icons/bs"
 
-
-const socket= io("http://localhost:3010");
+const socket = io("http://localhost:3010");
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   // transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
+  marginLeft: "auto",
   // transition: theme.transitions.create('transform', {
   //   duration: theme.transitions.duration.shortest,
   // }),
 }));
 
-let genericCard=[{post_content:"This is a generic post",id:0, },{post_content:"This is a generic #2 post",id:101, }];
+let genericCard = [
+  { post_content: "This is a generic post", id: 0 },
+  { post_content: "This is a generic #2 post", id: 101 },
+];
 
 /*
 export const postLoader = async () => {
@@ -54,95 +58,109 @@ export const postLoader = async () => {
 
 export default function RecipeReviewCard() {
   const [expanded, setExpanded] = React.useState(false);
-  const [postdata, setPostData]=React.useState([]); //[genericCard]
-  const [postform, setPostForm]=React.useState(''); //[genericCard]
-  const [count, setCount] = React.useState(0)
+  const [postdata, setPostData] = React.useState([]); //[genericCard]
+  const [postform, setPostForm] = React.useState(""); //[genericCard]
+  const [count, setCount] = React.useState(0);
+  const [expandedMap, setExpandedMap] = React.useState({}); //handles individual state for comments
+  const [commentCounts, setCommentCounts] = React.useState({});
 
-
+  /*
   const handleExpandClick = () => {
     setExpanded(!expanded);
     //socket.emit("clickedPost",postId);//Emits the id of the currently clicked post
     socket.emit("getPostComments");
+  };*/
+
+  //Seperates the state of each comment individually so that one action does not effect all.
+  const handleExpandClick = (postId) => {
+    setExpandedMap((prevExpandedMap) => ({
+      ...prevExpandedMap,
+      [postId]: !prevExpandedMap[postId],
+    }));
+
+    socket.emit("getPostComments");
   };
 
-  
+  /*
+    socket.on('getnewHivePost', (response)=>{
+      setPostData(response); 
+    });  
+*/
 
-   React.useEffect(()=>{
-     socket.on("getHivePost", (data) => {
+  const handleDeleteClick = (postId) => {};
+
+  React.useEffect(() => {
+    socket.on("getHivePost", (data) => {
       try {
-      
-        if(postdata!==data){
-        setPostData(data);} // Update state using setPostData
+        if (postdata !== data) {
+          setPostData(data);
+        } // Update state using setPostData
         //setLoading(false); // Set loading to false once data is received
-       // socket.emit("test",data);
+        // socket.emit("test",data);
       } catch (error) {
         console.error("Error updating postdata:", error);
       }
     });
   }, [postdata]); //postform caused to many rerenders, need to experiment
- 
 
+  //const thePostsData=postdata;
 
-//const thePostsData=postdata;
+  return (
+    <div>
+      {/**Makes sure that postdata exist before trying to render the components */}
+      {postdata &&
+        postdata.map((post) => {
+          return (
+            <Toolbar
+              key={post.id}
+              disableGutters
+              sx={{
+                display: "flex", // Use flexbox layout
+                justifyContent: "center", // Center-align horizontally
+                alignContent: "center",
+                marginTop: "0px",
+                marginLeft: "100px",
+              }}
+            >
+              <Card sx={{ maxWidth: 345, margin: 10 }}>
+                <CardHeader
+                  avatar={
+                    //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                    //     R
+                    //   </Avatar>
+                    <AvatarLogo />
+                  }
+                  // action={
+                  //   <IconButton aria-label="settings">
+                  //     <MoreVertIcon />
+                  //   </IconButton>
+                  // }
+                  title={post.id}
+                  subheader={post.id}
+                />
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image="/src/assets/Logo.svg"
+                  alt="Paella dish"
+                />
+                <CardContent>
+                  <Typography variant="body2" color="text.secondary">
+                    {post.post_content}
+                  </Typography>
+                </CardContent>
+                {/* <CardActions disableSpacing> */}
+                <IconButton aria-label="Like">
+                  <EmojiNatureTwoToneIcon
+                    onClick={() => setCount((count) => count + 1)}
+                  />
+                  {count}
+                </IconButton>
+                <IconButton aria-label="Delete">
+                  <DeleteForeverIcon />
+                </IconButton>
 
-
-
-
-return (
-  <div>
-
-  {postdata.map((post)=>{ 
-   
-    return(
-  <Toolbar
-  key={post.id} 
-disableGutters
-sx={{
-  display: 'flex',           // Use flexbox layout
-  justifyContent: 'center',  // Center-align horizontally
-  alignContent:'center',
-  marginTop:'0px',
-  marginLeft:'100px'
-  
-}}
->
-  <Card sx={{ maxWidth: 345, margin:10 }}>
-    <CardHeader
-      avatar={
-      //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-      //     R
-      //   </Avatar>
-      <AvatarLogo/>
-      }
-      
-
-      // action={
-      //   <IconButton aria-label="settings">
-      //     <MoreVertIcon />
-      //   </IconButton>
-      // }
-      title={post.id}
-      subheader={post.id}
-    />
-    <CardMedia
-      component="img"
-      height="194"
-      image="/src/assets/Logo.svg"
-      alt="Paella dish"
-    />
-    <CardContent>
-      <Typography variant="body2" color="text.secondary">
-          {post.post_content}
-      </Typography>
-    </CardContent>
-    {/* <CardActions disableSpacing> */}
-      <IconButton aria-label="Like">
-      
-        <EmojiNatureTwoToneIcon onClick={() => setCount((count) => count + 1)}/>
-        {count}
-        
-      </IconButton>
-     {/* <ExpandMore>
+                {/* <ExpandMore>
      <img
           src={ChatIcon}
           alt="ChatIcon"
@@ -150,46 +168,65 @@ sx={{
           
         />  
       </ExpandMore>  */}
-        
-      {/**change this to comment section */} 
-      <ExpandMore
-        expand={expanded}
-        onClick={handleExpandClick}
-        aria-expanded={expanded}
-        aria-label="show more"
-      >
-      <img
-          src={ChatIcon}
-          alt="ChatIcon"
-          style={{ display: { xs: 'none', md: 'flex' },width: '95px', height: 'auto',}} 
-          
-        />            
-        </ExpandMore>
-      
-    <Collapse in={expanded} timeout="auto" unmountOnExit>
-      <CardContent>
-        <Typography paragraph><CommentPost postId={post.id}/></Typography>
-        {/* <AvatarLogo/>
+
+                {/**change this to comment section */}
+                <ExpandMore
+                  expand={expandedMap[post.id]}
+                  onClick={() => handleExpandClick(post.id)}
+                  aria-expanded={expandedMap[post.id]}
+                  aria-label="show more"
+                >
+                  <img
+                    src={ChatIcon}
+                    alt="ChatIcon"
+                    style={{
+                      display: { xs: "none", md: "flex" },
+                      width: "95px",
+                      height: "auto",
+                    }}
+                  />
+                </ExpandMore>
+
+                <Collapse
+                  in={expandedMap[post.id]}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <CardContent>
+                    <Typography paragraph>
+                      <CommentPost postId={post.id} />
+                    </Typography>
+                    {/* <AvatarLogo/>
         <Typography paragraph >
           Test
-        </Typography> */}  
-      </CardContent>
-    </Collapse>
-    {/* </CardActions> */}
-  </Card>
-</Toolbar>
-)  
-  })}
+        </Typography> */}
+                  </CardContent>
+                </Collapse>
+                {/* </CardActions> */}
+              </Card>
+            </Toolbar>
+          );
+        })}
+    </div>
+  );
+}
 
-</div>
-);
-
-} 
-
-
-
-
-
+/**
+ *  <ExpandMore
+        expand={expandedMap[post.id]}
+        onClick={() => handleExpandClick(post.id)}
+        aria-expanded={expandedMap[post.id]}
+        aria-label="show more"
+      >
+      
+        </ExpandMore>
+        <Collapse in={expandedMap[post.id]} timeout="auto" unmountOnExit>
+          <CardContent>
+         
+          </CardContent>
+        </Collapse>
+      </Card>
+ */
 
 /**
  * // Post component accepts a post object prop
@@ -236,4 +273,3 @@ function Post({ post }) {
   <Post key={post.id} post={post} /> 
 ))}
  */
-

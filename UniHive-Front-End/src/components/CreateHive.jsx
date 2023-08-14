@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
+import React, { useState, useEffect } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import collegesData from "../../majors.json";
-import Divider from '@mui/material/Divider';
+import Divider from "@mui/material/Divider";
 import io from "socket.io-client"; //Used to create connection with backend
 
-
-const socket= io("http://localhost:3010");
+const socket = io("http://localhost:3010");
 
 function CreateHive({ open, onClose }) {
-  const [hiveName, setHiveName] = useState('');
-  const [hiveDescription, setHiveDescription] = useState('');
+  const [hiveName, setHiveName] = useState("");
+  const [hiveDescription, setHiveDescription] = useState("");
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState("");
   const [majors, setMajors] = useState([]);
   const [selectedMajor, setSelectedMajor] = useState("");
-  const [form, setForm]=useState();
+  const [form, setForm] = useState();
 
   useEffect(() => {
     // Fetch college data from the JSON file and set it in the state
@@ -30,7 +29,9 @@ function CreateHive({ open, onClose }) {
   useEffect(() => {
     // Fetch majors based on the selected college and set them in the state
     if (selectedCollege) {
-      const college = colleges.find((col) => col.college_Name === selectedCollege);
+      const college = colleges.find(
+        (col) => col.college_Name === selectedCollege
+      );
       if (college) {
         setMajors(college.college_Degrees);
       }
@@ -39,27 +40,31 @@ function CreateHive({ open, onClose }) {
 
   const handleClose = () => {
     onClose();
-    setHiveName('');
-    setHiveDescription('');
+    setHiveName("");
+    setHiveDescription("");
     setSelectedCollege("");
     setSelectedMajor("");
   };
 
   const handleSubmit = () => {
     // Add your logic here to handle the "Create Hive" functionality
-    console.log('Hive Name:', hiveName);
-    console.log('Hive Description:', hiveDescription);
-    console.log('Selected College:', selectedCollege);
-    console.log('Selected Major:', selectedMajor);
+    console.log("Hive Name:", hiveName);
+    console.log("Hive Description:", hiveDescription);
+    console.log("Selected College:", selectedCollege);
+    console.log("Selected Major:", selectedMajor);
 
-
-    const formData={hiveName, hiveDescription, selectedCollege, selectedMajor};
+    const formData = {
+      hiveName,
+      hiveDescription,
+      selectedCollege,
+      selectedMajor,
+    };
     // Perform any additional actions or API calls as needed
     //Emits an event to the create group connection
     setForm(formData); //Trying to have the sidebar rerender when the new group is created
-    socket.emit("creategroup",formData);
+    socket.emit("creategroup", formData);
 
-  /*
+    /*
     groupChatNamespace.on("connection", (socket) => {
         console.log("Client connected to /groupchat namespace");
         socket.emit("creategroup",formData);
@@ -82,7 +87,7 @@ function CreateHive({ open, onClose }) {
           value={hiveName}
           onChange={(e) => setHiveName(e.target.value)}
         />
-        
+
         <TextField
           label="Hive Description"
           variant="outlined"
@@ -161,4 +166,3 @@ function CreateHive({ open, onClose }) {
 }
 
 export default CreateHive;
-

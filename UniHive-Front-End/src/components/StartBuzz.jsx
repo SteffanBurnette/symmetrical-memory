@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
+import React, { useState } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import collegesData from "../../majors.json";
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField'; // Import TextField from @mui/material
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField"; // Import TextField from @mui/material
 import io from "socket.io-client";
 import getMSG from "../components/ChatBox";
 
 //Establishes a connection to our backend socket server.
 //We can use this to listen to events or emit events.
-const socket= io("http://localhost:3010");
+const socket = io("http://localhost:3010");
 /*
 export const dataLoader = async () => {
   try {
@@ -40,12 +40,11 @@ export const userLoader = async () => {
 };
 */
 
-
 function StartBuzz({ open, onClose }) {
   const [selectedName, setSelectedName] = useState(null);
   const [buzzdata, setBuzzData] = useState([]);
 
-/*
+  /*
   React.useEffect(() => {
     async function fetchData() {
       const loadedData = await userLoader();
@@ -56,19 +55,16 @@ function StartBuzz({ open, onClose }) {
     fetchData();
   }, []);
 */
- 
-React.useEffect(() => {
 
-  socket.on('allUsersForMsg', users => {
-    setBuzzData(users);
-  });
+  React.useEffect(() => {
+    socket.on("allUsersForMsg", (users) => {
+      setBuzzData(users);
+    });
 
-  return () => {
-    socket.off('allUsersForMsg');
-  }
-
-}, []);
-
+    return () => {
+      socket.off("allUsersForMsg");
+    };
+  }, []);
 
   const handleCloseModal = () => {
     onClose();
@@ -77,8 +73,8 @@ React.useEffect(() => {
 
   const handleSubmit = () => {
     // You can access the selected name using the selectedName state variable
-    console.log('Selected Name:', selectedName);
-    socket.emit("selectedBuzz",selectedName);
+    console.log("Selected Name:", selectedName);
+    socket.emit("selectedBuzz", selectedName);
     socket.on("Buzzname", (data) => {
       // Handle received data here
       console.log("Received Buzzname data:", data);
@@ -88,13 +84,10 @@ React.useEffect(() => {
       setBuzzData(users);
     });
     // Perform any other actions or API calls as needed
-   // getMSG(); //Supose to render the existing conversation
+    // getMSG(); //Supose to render the existing conversation
     // Close the modal
     handleCloseModal();
   };
-
-
-
 
   return (
     <Dialog open={open} onClose={handleCloseModal} maxWidth="xs">
@@ -106,11 +99,13 @@ React.useEffect(() => {
           getOptionLabel={(buzzdata) => buzzdata.name}
           value={selectedName}
           onChange={(event, newValue) => setSelectedName(newValue)}
-          renderInput={(params) => <TextField {...params} label="Select a Name" variant="outlined" />}
+          renderInput={(params) => (
+            <TextField {...params} label="Select a Name" variant="outlined" />
+          )}
         />
       </DialogContent>
       <DialogActions>
-      <Button onClick={handleCloseModal} color="primary">
+        <Button onClick={handleCloseModal} color="primary">
           Cancel
         </Button>
         <Button onClick={handleSubmit} color="primary">

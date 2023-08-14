@@ -9,23 +9,14 @@ import Post from "../components/Post";
 import ChatBox from "../components/ChatBox";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../Themes/theme.jsx";
-import { useSelector } from "react-redux";
 //import PostShare from '../components/PostShare';
 
-export default function MainPageLayout() {
-  const { loading, userInfo, userToken, error, success } = useSelector(
-    (state) => state.auth
-  );
-  console.log(userInfo);
-  console.log(userToken);
+export default function VideoPageLayout() {
   return (
     <div>
       <ResponsiveAppBar />
       <ClippedDrawer />
 
-      <Post />
-
-      <ChatBox />
       <main>
         <Outlet />
       </main>

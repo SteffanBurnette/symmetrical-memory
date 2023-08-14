@@ -1,25 +1,22 @@
 import React, { useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 //import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+import axios from "axios";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import {io} from "socket.io-client";
-
-
-
-
-
-const socket=io("http://localhost:3010");
+import { io } from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../redux/authAction";
+import supabase from "../../config";
 
 function Login() {
-
   const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleOpen = () => {
     setOpen(true);
@@ -30,47 +27,17 @@ function Login() {
   };
 
   //const history = useHistory();
-const navigate= useNavigate();
-
-const formData={username, password};
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     // Here you can handle the login logic with the email and password
-    console.log("Username:",username);
-    console.log("Password:", password);
 
-
-//Sends the formdata to the server when the backend is listening for user login
-socket.emit('login', formData);
-
-
-
-    //Using axios to communicate with backend
-    /*
-    try {
-      // Send the form data to the backend API endpoint using Axios
-      const response = await axios.post("http://localhost:3010/login", formData);
-
-      // Log the response from the backend (optional)
-      console.log(response.data);
-
-      // Close the dialog (optional)
-      handleClose();
-     
-    } catch (error) {
-      console.error(error);
-      // Handle error (e.g., show an error message to the user)
-    }
-*/
-   
+    dispatch(loginUser({ email, password, supabase }));
+    //Sends the formdata to the server when the backend is listening for user login
     handleClose(); // Close the modal after login logic
-     // Redirect to the main page after credentials are inputted
-     navigate("main");
-    
+    // Redirect to the main page after credentials are inputted
+    navigate("main");
   };
-
-
-
 
   return (
     <>
@@ -104,13 +71,13 @@ socket.emit('login', formData);
         <DialogContent>
           {/* Add your input fields here */}
           <TextField
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
             variant="outlined"
             fullWidth
             margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <TextField
