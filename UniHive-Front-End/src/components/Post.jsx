@@ -191,49 +191,5 @@ sx={{
 
 
 
-/**
- * // Post component accepts a post object prop
-function Post({ post }) {
 
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <Card>
-      <CardHeader 
-        title={post.title}
-        subheader={post.date}
-        avatar={<Avatar />} 
-      />
-
-      <CardContent>
-        <Typography>{post.content}</Typography>
-      </CardContent>
-
-      <CardActions>
-        <IconButton>
-          <FavoriteIcon />  
-        </IconButton>
-
-        <ExpandMore
-          onClick={() => setExpanded(!expanded)}
-        >
-           <ChatBubbleIcon />
-        </ExpandMore>
-      </CardActions>
-      
-      <Collapse in={expanded}>
-        <CommentSection post={post} />
-      </Collapse>
-
-    </Card>
-  );
-
-}
-
-// Usage:
-
-{posts.map(post => (
-  <Post key={post.id} post={post} /> 
-))}
- */
 

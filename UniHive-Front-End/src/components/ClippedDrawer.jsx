@@ -237,6 +237,12 @@ export default function ClippedDrawer() {
                     onClick={() => {
                       handleHiveClick(hiveName.id);
                     }}
+                    sx={{
+                      "&:hover": {
+                       // Change the background color on hover
+                        borderRadius:'5px'
+                      },
+                    }}
                   >
                     <ListItemButton>
                       <ListItemIcon>
