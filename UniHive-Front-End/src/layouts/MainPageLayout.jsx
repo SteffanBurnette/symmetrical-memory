@@ -39,7 +39,6 @@ export default function MainPageLayout() {
         {/* Main Content */}
         <MainContentContainer>
           <ClippedDrawer />
-          <Post />
           <ChatBox />
           <Outlet />
         </MainContentContainer>

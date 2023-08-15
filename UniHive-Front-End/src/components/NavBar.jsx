@@ -18,6 +18,7 @@ import Discover from '../assets/Discover.svg';
 import Faqs from '../assets/Faqs.svg';
 import Swarms from '../assets/Swarms.svg';
 import { createTheme } from '@mui/material/styles';
+import "../styles/NavBar.css";
 
 
 import '../styles/NavBar.css';
@@ -127,7 +128,7 @@ function ResponsiveAppBar() {
               
             }}
           >
-            UNIHIVE
+            
              
             {/* <Typography className="logo-text"variant="h1" fontSize="30px"  fontFamily="YourCustomFont" sx={{ml:50, marginBottom:''}}>
                 
