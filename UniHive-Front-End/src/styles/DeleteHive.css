@@ -1,0 +1,82 @@
+*{
+    background-color: black;
+  }
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(10, 0, 0);
+    padding: 2rem;
+    width: 300px;
+    box-shadow: 0px 0px 10px rgb(255, 255, 255);
+    border-radius: 10px;
+    
+    z-index: 1000;
+    color:white;
+  }
+  
+  .modal h2 {
+    margin-top: 0;
+  }
+  
+  .content {
+    margin-bottom: 1rem;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .toggle-button {
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgb(255, 255, 255);
+    background-color: #FBCB1C;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding:0.2rem 1rem;
+    cursor: pointer;
+    margin: 5px;
+  }
+  .toggle-button-main {
+    border-radius: 10px;
+    /* box-shadow: 0px 0px 10px rgb(255, 255, 255); */
+    background-color: #FBCB1C;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding:0.2rem 1rem;
+    cursor: pointer;
+    margin: 5px;
+    
+  }
+  .toggle-button-main:hover{
+    opacity:.95;
+    transition: .3s all ease-in-out;
+    background-color: #ffffff;
+    color:#FBCB1C;
+    box-shadow: 0px 0px 10px rgb(255, 0, 0);
+  } 
+  .toggle-button:hover {
+    background-color: #ffffff;
+    color:#FBCB1C;
+    box-shadow: 0px 0px 10px rgb(255, 0, 0);
+  
+  }
+  /* Your Discover component styles */
+  .button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px; /* Add some spacing between the button and modal */
+  }
+  
+  .toggle-button-main {
+    align-items: center;
+    align-content: center;
+  
+    margin-left: 90%;
+  }
+  
+  
