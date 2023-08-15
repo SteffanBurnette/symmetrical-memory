@@ -33,29 +33,30 @@ function CreatePost({ open, onClose }) {
     }*/
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs">
-      <DialogTitle>Create Post</DialogTitle>
-      <DialogContent>
-        <TextField
-          label="Post Content"
-          variant="outlined"
-          fullWidth
-          value={postContent}
-          onChange={(e) => setPostContent(e.target.value)}
-          multiline
-          rows={3}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+    <Dialog open={open} onClose={handleClose} fullWidth="lg">
+        <DialogTitle>Create Post</DialogTitle>
+        <DialogContent>
+          <TextField
+            id="standard-textarea"
+            placeholder="Share something!"
+            multiline
+            variant="standard"
+            value={postContent}
+            onChange={(e) => setPostContent(e.target.value)}
+            rows={10}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+  ); 
 }
 
 export default CreatePost;

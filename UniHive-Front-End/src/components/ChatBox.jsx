@@ -77,7 +77,9 @@ socket.on("conversation",(data)=>{
           label="Type your message..."
           value={newMessage}
           onChange={handleInputChange}
-          variant="outlined"
+          id="standard-textarea"
+          multiline
+          variant="standard"
           style={styles.input}
         />
         <IconButton
@@ -85,7 +87,7 @@ socket.on("conversation",(data)=>{
           onClick={handleSendMessage}
           style={styles.button}
         >
-          <SendIcon />
+          <SendIcon sx={{color:'#FBCB1C'}}/>
         </IconButton>
       </div>
     </Paper>

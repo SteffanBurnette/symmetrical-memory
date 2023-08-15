@@ -181,6 +181,15 @@ export default function ClippedDrawer() {
             variant="contained"
             color="primary"
             startIcon={<EditNoteIcon />}
+            sx={{
+              mx: "10px",
+              my: "10px",
+              mt: "50px",
+              mb: "25px",
+              fontWeight: "bold",
+              textTransform: "none", // Prevent text capitalization
+              boxShadow: "0px 2px 5px rgba(255, 255, 0, 0.5)", // Add shadow
+            }}
             onClick={handleCreatePost}
           >
             Post

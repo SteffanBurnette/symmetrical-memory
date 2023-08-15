@@ -48,7 +48,7 @@ function Login() {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="standard"
         sx={{
           my: 10,
           borderWidth: "2px",
@@ -79,7 +79,7 @@ function Login() {
           <TextField
             id="email"
             label="Email"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={email}
@@ -90,7 +90,7 @@ function Login() {
             id="password"
             label="Password"
             type="password"
-            variant="outlined"
+            variant="standard"
             fullWidth
             margin="normal"
             value={password}

@@ -85,7 +85,7 @@ function CreateHive({ open, onClose }) {
         <TextField
           style={{ marginBottom: "1rem" }}
           label="Hive Name"
-          variant="outlined"
+          variant="standard"
           fullWidth
           value={hiveName}
           onChange={(e) => setHiveName(e.target.value)}
@@ -93,7 +93,7 @@ function CreateHive({ open, onClose }) {
 
         <TextField
           label="Hive Description"
-          variant="outlined"
+          variant="standard"
           fullWidth
           value={hiveDescription}
           onChange={(e) => setHiveDescription(e.target.value)}
@@ -105,7 +105,7 @@ function CreateHive({ open, onClose }) {
           select
           id="college"
           label="College"
-          variant="outlined"
+          variant="standard"
           fullWidth
           margin="normal"
           value={selectedCollege}
@@ -132,7 +132,7 @@ function CreateHive({ open, onClose }) {
           select
           id="major"
           label="Major"
-          variant="outlined"
+          variant="standard"
           fullWidth
           margin="normal"
           value={selectedMajor}
