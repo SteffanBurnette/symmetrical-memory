@@ -78,9 +78,12 @@ function CreateHive({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs">
-      <DialogTitle>Create Hive</DialogTitle>
+      <DialogTitle className="flex justify-center items-center">
+        <h1>Create Hive</h1>
+      </DialogTitle>
       <DialogContent>
         <TextField
+          style={{ marginBottom: "1rem" }}
           label="Hive Name"
           variant="outlined"
           fullWidth

@@ -209,7 +209,7 @@ io.on("connection", (socket) => {
       const { data, error } = await supabase
         .from("User")
         .select("*")
-        .eq("name", formData.username)
+        .eq("email", formData.email)
         .single();
       //console.log("This is the data ", +data);
 
@@ -462,13 +462,11 @@ io.on("connection", (socket) => {
   /////////////////CREATE COMMENT/////////////////////////
   socket.on("createComment", async (datas) => {
     console.log("This is the comment data" + datas);
-    const { data: newComment, error } = await supabase
-      .from("Comments")
-      .insert({
-        content: datas.text,
-        postId: datas.pid.postId,
-        userId: currentUser.id,
-      });
+    const { data: newComment, error } = await supabase.from("Comments").insert({
+      content: datas.text,
+      postId: datas.pid.postId,
+      userId: currentUser.id,
+    });
 
     if (error) {
       console.error(error);

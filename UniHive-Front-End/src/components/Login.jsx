@@ -11,6 +11,7 @@ import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../redux/authAction";
 import supabase from "../../config";
+const socket = io("http://localhost:3010");
 
 function Login() {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,12 @@ function Login() {
 
   const handleLogin = async () => {
     // Here you can handle the login logic with the email and password
+    const formData = {
+      email,
+      password,
+    };
 
+    socket.emit("login", formData);
     dispatch(loginUser({ email, password, supabase }));
     //Sends the formdata to the server when the backend is listening for user login
     handleClose(); // Close the modal after login logic

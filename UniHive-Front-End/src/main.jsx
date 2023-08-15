@@ -17,12 +17,15 @@ import { Provider } from "react-redux";
 import store from "../redux/store";
 import EventPageLayout from "./layouts/EventPageLayout";
 import VideoPageLayout from "./layouts/VideoPageLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<RootLayout />}>
       <Route path="/" element={<LandingPage />}></Route>
-      <Route path="main" element={<MainPageLayout />}></Route>
+      <Route element={<ProtectedRoute />}>
+        <Route path="main" element={<MainPageLayout />} />
+      </Route>
       <Route path="event" element={<EventPageLayout />}></Route>
       <Route path="video" element={<VideoPageLayout />}></Route>
     </Route>
