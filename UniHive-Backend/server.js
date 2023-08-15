@@ -61,6 +61,7 @@ const io = new Server(server, {
 });
 
 app.use((req, res, next) => {
+  //
   if (req.session.userId) {
     // Fetch user data from your database using req.session.userId
     // Example: req.user = await User.findById(req.session.userId);
