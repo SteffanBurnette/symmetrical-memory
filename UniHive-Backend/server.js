@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { User } = require("./models");
 const { post } = require("./models");
 const { comment } = require("./models");
@@ -1171,9 +1172,23 @@ socket.on("joinGroup",async (groupID)=>{
 
   // Handle disconnection
   socket.on("disconnect", () => {
-    console.log(currentUser.name + " disconnected");
+
+    console.log(currentUser?.name + " disconnected");
   });
 });
+// ...
+
+// ...
+// all other route handlers
+
+app.use(express.static(path.join(__dirname, "../UniHive-Front-End/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../UniHive-Front-End/dist", "index.html"));
+});
+
+
+
 //Defines the server port and Starts the server
 const port = 3010;
 app.listen(3011, () => {
