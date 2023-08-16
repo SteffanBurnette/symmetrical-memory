@@ -31,6 +31,10 @@ import CreatePost from "../components/CreatePost";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import StartBuzz from "../components/StartBuzz";
 import { createClient } from "@supabase/supabase-js";
+import Discover from "./Discover";
+import { styled } from "@mui/material/styles";
+import theme from "../Themes/theme.jsx"; // Replace with the path to your theme file
+import Swarm from "./Swarm";
 
 const drawerWidth = 240;
 
@@ -65,6 +69,9 @@ export default function ClippedDrawer() {
   const [clickedId, setClickedId] = React.useState();
   //const [showCreatePost, setShowCreatePost] = React.useState(false);
   const [showStartBuzz, setShowStartBuzz] = React.useState(false);
+  const [showDiscover, setShowDiscover] = React.useState(false);
+  const [showSwarm, setShowSwarm] = React.useState(false);
+
   //create buzz
   const handleStartBuzz = () => {
     setShowStartBuzz(true);
@@ -160,9 +167,27 @@ export default function ClippedDrawer() {
     setData(data);
   });
 
+  const RootContainer = styled("div")({
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+  });
+
+  const AppBarContainer = styled("header")({
+    zIndex: theme.zIndex.drawer + 1,
+    boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.1)",
+  });
+
+  const MainContentContainer = styled("main")({
+    flexGrow: 1,
+    overflow: "auto",
+    padding: theme.spacing(3),
+  });
+
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex " }}>
       <CssBaseline />
+
       <Drawer
         variant="permanent"
         sx={{
@@ -175,7 +200,7 @@ export default function ClippedDrawer() {
           },
         }}
       >
-        <Toolbar />
+        <Toolbar /> {/* Add this line */}
         <Box sx={{ overflow: "auto" }}>
           <Button
             variant="contained"
@@ -294,12 +319,14 @@ export default function ClippedDrawer() {
       </Drawer>
 
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-
         {/* Render the selected group's posts */}
         {selectedGroupPosts.map((post) => (
           <RecipeReviewCard key={post.id} post={post} />
         ))}
+        {/* Render the discover component */}
+        {showDiscover && <Discover />}
+        {/* Render the swarms component */}
+        {showSwarm && <Swarm />}
       </Box>
 
       {/* Render the CreateHive component */}

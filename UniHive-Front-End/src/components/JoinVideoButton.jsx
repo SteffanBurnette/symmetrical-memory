@@ -28,7 +28,7 @@ const theme = createTheme({
   },
 });
 
-function JoinVideoButton() {
+function JoinVideoButton({ callState, setCallState }) {
   const [joined, setJoined] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ function JoinVideoButton() {
   const handleJoinCall = () => {
     setJoined(true); // Set joined state to true
     setCallEnded(false); // Reset callEnded state to false
-    navigate("video");
+    //navigate("video");
   };
   const handleEndCall = () => {
     setJoined(false);

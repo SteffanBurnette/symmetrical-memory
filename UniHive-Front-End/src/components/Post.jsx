@@ -1,275 +1,157 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Toolbar from "@mui/material/Toolbar";
-import AvatarLogo from "./AvatarLogo";
-import { Avatar } from "@mui/material";
-//import CommentBox from './CommentPost';
-import CommentPost from "../components/CommentPost";
-import ChatIcon from "../assets/ChatIcon.png";
+import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
-import EmojiNatureTwoToneIcon from "@mui/icons-material/EmojiNatureTwoTone";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-//import {BsFillTrashFill} from "react-icons/bs"
+import {
+  Box,
+  Heading,
+  Text,
+  Button,
+  Flex,
+  Avatar,
+  IconButton,
+  Image,
+  Collapse,
+  Input,
+} from "@chakra-ui/react";
+import { BiLike, BiChat, BiShare } from "react-icons/bi";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import supabase from "../../config";
+import "../assets/Discover.css"; // Import the CSS file
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { format } from "date-fns";
 
 const socket = io("http://localhost:3010");
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  // transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: "auto",
-  // transition: theme.transitions.create('transform', {
-  //   duration: theme.transitions.duration.shortest,
-  // }),
-}));
-
-let genericCard = [
-  { post_content: "This is a generic post", id: 0 },
-  { post_content: "This is a generic #2 post", id: 101 },
-];
-
-/*
-export const postLoader = async () => {
-  try {
-    const response = await fetch('http://localhost:3011/posts');
-    if (!response.ok) {
-      throw new Error('Data was not properly fetched');
-    }
-    return response.json();
-  } catch (error) {
-    throw new Error('Error fetching data');
-  }
-};
-*/
-
 export default function RecipeReviewCard() {
-  const [expanded, setExpanded] = React.useState(false);
-  const [postdata, setPostData] = React.useState([]); //[genericCard]
-  const [postform, setPostForm] = React.useState(""); //[genericCard]
-  const [count, setCount] = React.useState(0);
-  const [expandedMap, setExpandedMap] = React.useState({}); //handles individual state for comments
-  const [commentCounts, setCommentCounts] = React.useState({});
+  const [expandedMap, setExpandedMap] = useState({});
+  const [postdata, setPostData] = useState([]);
+  const [count, setCount] = useState(0);
+  const [comments, setComments] = useState({});
+  const [showCommentField, setShowCommentField] = useState({});
 
-  /*
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-    //socket.emit("clickedPost",postId);//Emits the id of the currently clicked post
-    socket.emit("getPostComments");
-  };*/
-
-  //Seperates the state of each comment individually so that one action does not effect all.
   const handleExpandClick = (postId) => {
     setExpandedMap((prevExpandedMap) => ({
       ...prevExpandedMap,
       [postId]: !prevExpandedMap[postId],
     }));
-
     socket.emit("getPostComments");
   };
 
-  /*
-    socket.on('getnewHivePost', (response)=>{
-      setPostData(response); 
-    });  
-*/
-
-  const handleDeleteClick = (postId) => {};
-
-  React.useEffect(() => {
+  useEffect(() => {
     socket.on("getHivePost", (data) => {
-      try {
-        if (postdata !== data) {
-          setPostData(data);
-        } // Update state using setPostData
-        //setLoading(false); // Set loading to false once data is received
-        // socket.emit("test",data);
-      } catch (error) {
-        console.error("Error updating postdata:", error);
+      if (postdata !== data) {
+        console.log(postdata);
+        setPostData(data);
       }
     });
-  }, [postdata]); //postform caused to many rerenders, need to experiment
+  }, [postdata]);
 
-  //const thePostsData=postdata;
+  const customTheme = extendTheme({
+    styles: {
+      global: {
+        body: {
+          backgroundColor: "black",
+          color: "white",
+        },
+      },
+    },
+  });
+
+  const handleCommentChange = (postId, commentText) => {
+    setComments((prevComments) => ({
+      ...prevComments,
+      [postId]: commentText,
+    }));
+  };
+
+  const handlePostComment = (postId) => {
+    console.log("Comment for post", postId, ":", comments[postId]);
+    // TODO: Post the comment to the server
+    setShowCommentField((prevShowCommentField) => ({
+      ...prevShowCommentField,
+      [postId]: false,
+    }));
+  };
 
   return (
-    <div>
-      {/**Makes sure that postdata exist before trying to render the components */}
-      {postdata &&
-        postdata.map((post) => {
-          return (
-            <Toolbar
-              key={post.id}
-              disableGutters
-              sx={{
-                display: "flex", // Use flexbox layout
-                justifyContent: "center", // Center-align horizontally
-                alignContent: "center",
-                marginTop: "0px",
-                marginLeft: "100px",
-              }}
+    <ChakraProvider theme={customTheme}>
+      <div className="flex justify-end items-center flex-col ">
+        {postdata &&
+          postdata.map((post, index) => (
+            <Box
+              key={index}
+              maxW="lg"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              className=" mt-5"
             >
-              <Card sx={{ maxWidth: 345, margin: 10 }}>
-                <CardHeader
-                  avatar={
-                    //   <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                    //     R
-                    //   </Avatar>
-                    <AvatarLogo />
+              <Flex p="4" alignItems="center" justifyContent="space-between">
+                <Flex alignItems="center">
+                  <Avatar
+                    size="md"
+                    name={post.group_name}
+                    src={post.group_image}
+                  />
+                  <Box ml="4">
+                    <Heading size="sm">{post.poster_name}</Heading>
+                    <Text>
+                      {format(new Date(post.created_at), "MMMM d, yyyy h:mm a")}
+                    </Text>
+                  </Box>
+                </Flex>
+                <IconButton
+                  variant="ghost"
+                  colorScheme="gray"
+                  aria-label="See menu"
+                  icon={<BsThreeDotsVertical />}
+                />
+              </Flex>
+              <Box p="4">
+                <Text>{post.post_content}</Text>
+              </Box>
+              <Image
+                objectFit="cover"
+                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                alt="Chakra UI"
+              />
+              <Flex p="4" justifyContent="space-between">
+                <Button variant="ghost" leftIcon={<BiLike />}>
+                  Like
+                </Button>
+                <Button
+                  variant="ghost"
+                  leftIcon={<BiChat />}
+                  onClick={() =>
+                    setShowCommentField((prevShowCommentField) => ({
+                      ...prevShowCommentField,
+                      [post.id]: !prevShowCommentField[post.id],
+                    }))
                   }
-                  // action={
-                  //   <IconButton aria-label="settings">
-                  //     <MoreVertIcon />
-                  //   </IconButton>
-                  // }
-                  title={post.id}
-                  subheader={post.id}
-                />
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image="/src/assets/Logo.svg"
-                  alt="Paella dish"
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {post.post_content}
-                  </Typography>
-                </CardContent>
-                {/* <CardActions disableSpacing> */}
-                <IconButton aria-label="Like">
-                  <EmojiNatureTwoToneIcon
-                    onClick={() => setCount((count) => count + 1)}
-                  />
-                  {count}
-                </IconButton>
-                <IconButton aria-label="Delete">
-                  <DeleteForeverIcon />
-                </IconButton>
-
-                {/* <ExpandMore>
-     <img
-          src={ChatIcon}
-          alt="ChatIcon"
-          style={{ display: { xs: 'none', md: 'flex' },width: '95px', height: 'auto',}} 
-          
-        />  
-      </ExpandMore>  */}
-
-                {/**change this to comment section */}
-                <ExpandMore
-                  expand={expandedMap[post.id]}
-                  onClick={() => handleExpandClick(post.id)}
-                  aria-expanded={expandedMap[post.id]}
-                  aria-label="show more"
                 >
-                  <img
-                    src={ChatIcon}
-                    alt="ChatIcon"
-                    style={{
-                      display: { xs: "none", md: "flex" },
-                      width: "95px",
-                      height: "auto",
-                    }}
+                  Comment
+                </Button>
+                <Button variant="ghost" leftIcon={<BiShare />}>
+                  Share
+                </Button>
+              </Flex>
+              <Collapse in={showCommentField[post.id]}>
+                <Flex p="4" alignItems="center">
+                  <Input
+                    placeholder="Type your comment"
+                    value={comments[post.id] || ""}
+                    onChange={(e) =>
+                      handleCommentChange(post.id, e.target.value)
+                    }
+                    flex="1"
                   />
-                </ExpandMore>
-
-                <Collapse
-                  in={expandedMap[post.id]}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <CardContent>
-                    <Typography paragraph>
-                      <CommentPost postId={post.id} />
-                    </Typography>
-                    {/* <AvatarLogo/>
-        <Typography paragraph >
-          Test
-        </Typography> */}
-                  </CardContent>
-                </Collapse>
-                {/* </CardActions> */}
-              </Card>
-            </Toolbar>
-          );
-        })}
-    </div>
+                  <Button ml="4" onClick={() => handlePostComment(post.id)}>
+                    Post
+                  </Button>
+                </Flex>
+              </Collapse>
+            </Box>
+          ))}
+      </div>
+    </ChakraProvider>
   );
 }
-
-/**
- *  <ExpandMore
-        expand={expandedMap[post.id]}
-        onClick={() => handleExpandClick(post.id)}
-        aria-expanded={expandedMap[post.id]}
-        aria-label="show more"
-      >
-      
-        </ExpandMore>
-        <Collapse in={expandedMap[post.id]} timeout="auto" unmountOnExit>
-          <CardContent>
-         
-          </CardContent>
-        </Collapse>
-      </Card>
- */
-
-/**
- * // Post component accepts a post object prop
-function Post({ post }) {
-
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <Card>
-      <CardHeader 
-        title={post.title}
-        subheader={post.date}
-        avatar={<Avatar />} 
-      />
-
-      <CardContent>
-        <Typography>{post.content}</Typography>
-      </CardContent>
-
-      <CardActions>
-        <IconButton>
-          <FavoriteIcon />  
-        </IconButton>
-
-        <ExpandMore
-          onClick={() => setExpanded(!expanded)}
-        >
-           <ChatBubbleIcon />
-        </ExpandMore>
-      </CardActions>
-      
-      <Collapse in={expanded}>
-        <CommentSection post={post} />
-      </Collapse>
-
-    </Card>
-  );
-
-}
-
-// Usage:
-
-{posts.map(post => (
-  <Post key={post.id} post={post} /> 
-))}
- */

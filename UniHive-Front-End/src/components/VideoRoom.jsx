@@ -14,7 +14,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 const APP_ID = "89e81fddd6d6426e91fefdb00a495f13";
 //The ID of the project on agora.
 const TOKEN =
-  "007eJxTYNDdnP004fLrz8+05zG8/vc5VurU/fjuH+eOfnrIvynJ6ymbAoOFZaqFYVpKSopZipmJkVmqpWFaalpKkoFBoomlaZqhsUPz7ZSGQEYG2cWvWRgZIBDEZ2cIzcv0yCxLZWAAACTEJRU=";
+  "007eJxTYGjXtmL+2rD+a733/2dT1MMD/C1W/5ih8yn28eHWBZ4z7AIVGCwsUy0M01JSUsxSzEyMzFItDdNS01KSDAwSTSxN0wyN64/dSWkIZGTYWf2MgREKQXx2htC8TI/MslQGBgA5DiMI";
 //In order for the client to connect to the chat room they need to have a token
 const CHANNEL = "UniHive";
 //The name of the channel
@@ -133,13 +133,14 @@ export const VideoRoom = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{position: "absolute", top: -170, right: 450}}>
         <div>
           <div
-            style={{ display: "grid", gridTemplateColumns: "repeat(2,200px)" }}
+            style={{ display: "grid", gridTemplateColumns: "repeat(2,250px)", gridGap: '10px', 
+            border: "2px solid purple", backgroundColor: "black"  }}
           >
             {users.map((user) => (
-              <VideoPlayer key={user.uid} user={user} />
+              <VideoPlayer key={user.uid} user={user}/>
             ))}
           </div>
           <div style={{ marginTop: "20px", textAlign: "center" }}>
@@ -150,7 +151,7 @@ export const VideoRoom = () => {
                 startIcon={<CallEndIcon />}
                 onClick={() => handleEndCall()}
               >
-                End Call
+                Leave Call
               </Button>
             )}
           </div>

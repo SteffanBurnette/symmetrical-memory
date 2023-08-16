@@ -18,16 +18,21 @@ import store from "../redux/store";
 import EventPageLayout from "./layouts/EventPageLayout";
 import VideoPageLayout from "./layouts/VideoPageLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Discover from "./components/Discover";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<RootLayout />}>
       <Route path="/" element={<LandingPage />}></Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="main" element={<MainPageLayout />} />
+        <Route path="main" element={<MainPageLayout />}>
+          <Route path="video" element={<VideoPageLayout />}></Route>
+        </Route>
+
+        <Route path="discover" element={<Discover />} />
       </Route>
       <Route path="event" element={<EventPageLayout />}></Route>
-      <Route path="video" element={<VideoPageLayout />}></Route>
     </Route>
   )
 );

@@ -16,6 +16,7 @@ function CreatePost({ open, onClose }) {
   const handleClose = () => {
     onClose();
     setPostContent("");
+    socket.emit("rerenderPost"); //Triggers rerender once post is created
   };
 
   const handleSubmit = () => {
@@ -24,7 +25,8 @@ function CreatePost({ open, onClose }) {
     };
 
     socket.emit("createPost", formData);
-
+    //socket.emit("rerenderPost");
+   
     handleClose();
   };
 

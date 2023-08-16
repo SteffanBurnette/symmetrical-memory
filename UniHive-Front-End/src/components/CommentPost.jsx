@@ -9,6 +9,7 @@ import {
   Button,
 } from "@material-ui/core";
 import io from "socket.io-client";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 const socket = io("http://localhost:3010");
 
@@ -29,6 +30,7 @@ function CommentPost(postId) {
   socket.on("receivePostComments", (data) => {
     console.log(data);
     setSocketCom(data);
+    //socket.emit("getPostComments");
   });
 
   const handlePostComment = () => {
@@ -42,8 +44,10 @@ function CommentPost(postId) {
       console.log(updatedComment);
       socket.emit("createComment", updatedComment); //Creates the comment
       setComments((prev) => [...prev, updatedComment]);
-      console.log(socketCom);
+      
+      console.log(socketCom);  
       setNewComment("");
+      socket.emit("getPostComments");
     } catch (e) {
       console.log("This is the create comment error: " + e);
     }
@@ -62,7 +66,7 @@ function CommentPost(postId) {
           <Grid justifyContent="left" item xs zeroMinWidth>
             <TextField
               label="Add a comment"
-              variant="outlined"
+              variant="standard"
               size="small"
               fullWidth
               value={newComment}
@@ -88,6 +92,7 @@ function CommentPost(postId) {
             <Grid justifyContent="left" item xs zeroMinWidth>
               <h4 style={{ margin: 0, textAlign: "left" }}>Hady M Bah</h4>
               <p style={{ textAlign: "left" }}>{comment.content}</p>
+              <Button><HighlightOffIcon/></Button>
               <p style={{ textAlign: "left", color: "gray" }}>
                 posted {comment.createdAt}
               </p>

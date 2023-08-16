@@ -239,31 +239,47 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.error(error);
     }
-    try {
-      // Find all groups that the current user is a member of
-      const { data, error } = await supabase
-        .from("Groups")
-        .select("*")
-        .eq("groupToUser", currentUser.id);
 
-      if (error) {
-        console.error("Error fetching data:", error);
-        return;
-      }
+   // Fetch group IDs associated with the current user from GroupTag table
+   const { data: groupTagData, error: groupTagError } = await supabase
+   .from("GroupTag")
+   .select("groupId")
+   .eq("userId", currentUser.id);
 
-      if (data.length === 0) {
-        console.log("No groups found for the current user.");
-        return;
-      }
+ if (groupTagError) {
+   console.error("Error fetching GroupTag data:", groupTagError);
+   return;
+ }
 
-      currentGroup = data;
+ if (groupTagData.length === 0) {
+   console.log("No groups found for the current user in GroupTag.");
+   return;
+ }
 
-      console.log("This is the currentGroup:", data);
-      socket.broadcast.emit("loadData", currentGroup);
-      //socket.emit("loadData", currentGroup);
-    } catch (error) {
-      console.error("Fetch data error:", error);
-    }
+ // Extract group IDs from groupTagData
+ const groupIds = groupTagData.map((groupTag) => groupTag.groupId);
+
+ // Fetch all groups associated with the extracted group IDs
+ const { data: groupsData, error: groupsError } = await supabase
+   .from("Groups")
+   .select("*")
+   .in("id", groupIds);
+
+ if (groupsError) {
+   console.error("Error fetching Groups data:", groupsError);
+   return;
+ }
+
+ if (groupsData.length === 0) {
+   console.log("No groups found for the current user.");
+   return;
+ }
+
+ currentGroup = groupsData;
+
+ console.log("This is the currentGroup:", currentGroup);
+ socket.broadcast.emit("loadData", currentGroup);
+ 
 
     //const data = await group.findAll({ where: { groupToUser: currentUser.id } }); // Query the database using your Sequelize model
     // res.json(datas);
@@ -311,11 +327,7 @@ io.on("connection", (socket) => {
         .select();
 
       currentGroup = {
-        group_name: data.group_name,
-        group_description: data.group_decsription,
-        group_college: data.group_college,
-        college_major: data.colleg_major,
-        groupToUser: currentUser.id,
+      data
       };
       /* 
        currentGroup=await group.create({
@@ -331,13 +343,30 @@ io.on("connection", (socket) => {
         currentGrouptag=await GroupTag.create({
           groupId: currentGroup.id,
           userId: currentUser.id,
+
         });*/
+        const groupId = data[0].id;
+        //Creates the grouptag on creation
+        const { dataa, errror } = await supabase
+        .from('GroupTag')
+        .insert([
+          { groupId: groupId, userId: currentUser.id },
+        ])
+        .select()
+  
+        console.log("Grouptag crreated: "+dataa);
+  
     } catch (e) {
       // Returns error if group was not successfully made.
       console.error(e);
     }
 
+
+    ///Old socket block of getting groups by groupToUser
+    /*
     try {
+
+      
       // Find all groups that the current user is a member of
       const { data, error } = await supabase
         .from("Groups")
@@ -361,8 +390,52 @@ io.on("connection", (socket) => {
       //socket.emit("loadData", currentGroup);
     } catch (error) {
       console.error("Fetch data error:", error);
+    }*/
+    try {
+      // Find all group IDs associated with the current user in GroupTag table
+      const { data: groupTagData, error: groupTagError } = await supabase
+        .from("GroupTag")
+        .select("groupId")
+        .eq("userId", currentUser.id);
+    
+      if (groupTagError) {
+        console.error("Error fetching GroupTag data:", groupTagError);
+        return;
+      }
+    
+      if (groupTagData.length === 0) {
+        console.log("No groups found for the current user in GroupTag.");
+        return;
+      }
+    
+      // Extract group IDs from groupTagData
+      const groupIds = groupTagData.map((groupTag) => groupTag.groupId);
+    
+      // Fetch all groups associated with the extracted group IDs
+      const { data: groupsData, error: groupsError } = await supabase
+        .from("Groups")
+        .select("*")
+        .in("id", groupIds);
+    
+      if (groupsError) {
+        console.error("Error fetching Groups data:", groupsError);
+        return;
+      }
+    
+      if (groupsData.length === 0) {
+        console.log("No groups found for the current user.");
+        return;
+      }
+    
+      currentGroup = groupsData;
+    
+      console.log("This is the currentGroup:", currentGroup);
+      socket.broadcast.emit("loadData", currentGroup);
+    } catch (error) {
+      console.error("Fetch data error:", error);
     }
-  });
+    
+  }); 
 
   //GETS all POST ##################################################
   // Listen for a request to fetch a single post by ID
@@ -460,6 +533,37 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("rerenderPost",async ()=>{
+    try {
+      // Gets all the posts of the current hive
+      //Uses .the to only execute the emit after the posts have been fetched
+      /*  post.findAll({ where: { groupId: clickedhive } })
+     .then((postgroup) => {   console.log(data);
+      io.emit("getHivePost", data);}) // Sends all the found post to the getHivePost listener
+      //console.log("Emit Triggered?");
+   
+    .catch((error) => {
+      console.log(error);
+    });*/
+      // currentPost = postgroup;
+      // Use Supabase query to retrieve posts for the clicked hive
+      const { data, error } = await supabase
+        .from("Posts")
+        .select("*")
+        .eq("groupId", clickedhive);
+      //Sets the currentpost variable to the recieved data so that we can send it to the user.
+      currentPost = data;
+      console.log(currentPost);
+      if (clickedhive) {
+        console.log("The socket will be emitted");
+        io.emit("getHivePost", currentPost);
+      } // Sends all the found post to the getHivePost listener
+      //console.log("Emit Triggered?");
+    } catch (e) {
+      console.log(e); 
+    }
+  }) 
+
   /////////////////CREATE COMMENT/////////////////////////
   socket.on("createComment", async (datas) => {
     console.log("This is the comment data" + datas);
@@ -518,9 +622,11 @@ io.on("connection", (socket) => {
   }
    // allComments=await comment.findAll({where:{postId:groupostids.id}})
 */
-    socket.broadcast.emit("receivePostComments", allComments); //emits the comments after the promise is finish executing
+    socket.emit("receivePostComments", allComments); //emits the comments after the promise is finish executing
     console.log(allComments);
   });
+
+   
 
   //////////////Creates a message table when the user selects buzz//////////////
 
@@ -570,7 +676,7 @@ io.on("connection", (socket) => {
 
     console.log(
       "The new senderID: " + ssenderId + " The new reciverID " + rreceiverId
-    );
+    ); 
 
     try {
       const { data, error } = await supabase.from("Messages").insert([
@@ -636,23 +742,36 @@ socket.on("getChatHistory",async ()=>{
   });
   ///////////////Deletes a Post//////////////
   socket.on("deletePost", async (postId) => {
-    const { error } = await supabase
-      .from("Posts")
-      .delete()
-      .eq("id", postId)
-      .eq("userId", currentUser.id);
+    console.log("ID of post to be deleted: "+ postId)
+    try {
+      const { data, error } = await supabase
+        .from('Posts')
+        .delete()
+        .eq('id', postId)
+        .eq('userId', currentUser.id);
+    
+      if (error) {
+        console.error('Error deleting post:', error);
+      } else {
+        console.log('Post deleted successfully:', data);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+    
+      //console.log("The command to delet post was executed "+ data);
   });
 
   ///////////////Updates a specific Comment/////////////////
   socket.on("updateComment", async ({ comID, updatedData }) => {
-    const { data, error } = await supabase
-      .from("Comments")
+    const { data, error } = await supabase 
+      .from("Comments") 
       .update({ content: updatedData })
       .eq("id", comID)
       .eq("userId", currentUser.id) //Ensure that only the user who made the comment can update it
       .select();
   });
-
+    
   ///////Deletes the specific Comment////////////////
 
   socket.on("deleteComment", async ({ comId, updatedData }) => {
@@ -667,12 +786,12 @@ socket.on("getChatHistory",async ()=>{
   socket.on("updateMSG", async ({ msgId, updatedData }) => {
     const { data, error } = await supabase
       .from("Messages")
-      .update({ content: updatedData })
+      .update({ content: updatedData })  
       .eq("id", msgId)
       .eq("creatorId", currentUser.id) //only the user that created the message can update it
       .select();
   });
-
+  
   ///////////////////Delete Direct Message/////////////////
   socket.on("deleteMSG", async (msgId) => {
     const { error } = await supabase
@@ -695,6 +814,36 @@ socket.on("getChatHistory",async ()=>{
 
     io.emit("returnGroups", data);
   });
+
+
+
+socket.on("joinGroup",async (groupID)=>{
+
+  const { data, error } = await supabase
+  .from('GroupTag')
+  .insert([
+    { groupId: groupID, userId: currentUser.id },
+  ])
+  .select()
+
+  console.log("Successfully created: "+data); 
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //////////////////////////////NORMAL EXPRESS ENDPOINTS//////////////////////////////
 
