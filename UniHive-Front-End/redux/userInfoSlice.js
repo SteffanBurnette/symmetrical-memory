@@ -1,32 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  fullName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  collegeLevel: "",
-  selectedCollege: "",
-  selectedMajor: "",
+  showSwarm: null,
+  showDiscover: null,
+  showPosts: null,
 };
 
 export const userSlice = createSlice({
-  name: "User",
+  name: "user",
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      state.collegeLevel = action.payload.collegeLevel;
-      state.confirmPassword = action.payload.confirmPassword;
-      state.email = action.payload.email;
-      state.fullName = action.payload.fullName;
-      state.password = action.payload.password;
-      state.selectedCollege = action.payload.selectedCollege;
-      state.selectedMajor = action.payload.selectedMajor;
+    setShowSwarm: (state) => {
+      state.showSwarm = true;
+      state.showDiscover = false;
+      state.showPosts = false;
+    },
+    setShowDiscover: (state) => {
+      state.showSwarm = false;
+      state.showDiscover = true;
+      state.showPosts = false;
+    },
+    setShowPosts: (state) => {
+      state.showSwarm = false;
+      state.showDiscover = false;
+      state.showPosts = true;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser } = userSlice.actions;
+export const { setShowSwarm, setShowDiscover, setShowPosts } =
+  userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,60 +1,77 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Form } from "react-router-dom";
+import { VideoRoom } from "../components/VideoRoom";
 import {
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  Divider,
   IconButton,
 } from "@mui/material";
 import DuoOutlinedIcon from "@mui/icons-material/DuoOutlined";
+import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { VideoRoom } from "../components/VideoRoom";
-import io from "socket.io-client"; 
+import { useNavigate } from "react-router-dom";
 
-const socket = io("http://localhost:3010");
+//import './App.css';
+//import { socketTest } from './components/Socket';
+
+// Create your theme configuration
 const theme = createTheme({
+  // Your theme configuration
   palette: {
-    mode: "dark",
+    mode: "dark", // Set the theme type to dark
     primary: {
-      main: "#FBCB1C",
+      main: "#FBCB1C", // dark grayblue = 1B1D21
     },
   },
 });
 
-function JoinVideoButton({ callEnded, onCallEnded }) {
+function JoinVideoButton({ callState, setCallState }) {
   const [joined, setJoined] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
+  const navigate = useNavigate();
 
   const handleJoinCall = () => {
-    setJoined(true);
-    setCallEnded(false);
+    setJoined(true); // Set joined state to true
+    setCallEnded(false); // Reset callEnded state to false
+    //navigate("video");
   };
-
   const handleEndCall = () => {
     setJoined(false);
-    //setCallEnded(true);
     setCallEnded(true);
-    onCallEnded(); 
+
+    // Reset state after 3 seconds
     setTimeout(() => {
       setCallEnded(false);
     }, 3000);
   };
-
+  //if the user hasnt joined the call the button will show
+  //If the user clicks the join button the videoRoom component will render.
   return (
     <ThemeProvider theme={theme}>
       <div>
         {!joined && !callEnded && (
-          <IconButton onClick={handleJoinCall}>
-            <DuoOutlinedIcon sx={{ color: "green" }} />
-          </IconButton>
+          <button onClick={handleJoinCall}>
+            <IconButton>
+              <DuoOutlinedIcon sx={{ color: "green" }} />
+            </IconButton>
+          </button>
         )}
 
         {joined && !callEnded && <VideoRoom onEndCall={handleEndCall} />}
 
         {callEnded && (
-          <IconButton onClick={() => setCallEnded(false)}>
-            <DuoOutlinedIcon sx={{ color: "green" }} />
-          </IconButton>
+          <button onClick={() => setCallEnded(false)}>
+            <IconButton>
+              <DuoOutlinedIcon sx={{ color: "green" }} />
+            </IconButton>
+          </button>
         )}
       </div>
     </ThemeProvider>
-  ); 
+  );
 }
 
 export default JoinVideoButton;

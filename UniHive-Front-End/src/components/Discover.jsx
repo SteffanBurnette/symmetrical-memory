@@ -16,7 +16,6 @@ import supabase from "../../config";
 import "../assets/Discover.css"; // Import the CSS file
 import io from "socket.io-client";
 
-
 const socket = io("http://localhost:3010");
 
 export default function Discover() {
@@ -45,10 +44,9 @@ export default function Discover() {
     fetchData();
   }, []);
 
-const onJoin=(groupId)=>{
-  socket.emit("joinGroup",groupId);
-}
-
+  const onJoin = (groupId) => {
+    socket.emit("joinGroup", groupId);
+  };
 
   return (
     <ChakraProvider theme={customTheme}>
@@ -56,7 +54,7 @@ const onJoin=(groupId)=>{
         <SimpleGrid
           spacing={4}
           templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-          className="mt-[500px] pt-30"
+          className="mt-[1300px] pt-30"
         >
           {hives.map((hive, index) => (
             <Box
@@ -93,7 +91,6 @@ const onJoin=(groupId)=>{
                     onJoin(hive.id); // Call the first function
                     onOpen(); // Call the second function
                   }}
-                  
                 >
                   Join
                 </Button>

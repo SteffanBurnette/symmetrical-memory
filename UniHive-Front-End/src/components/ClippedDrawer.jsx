@@ -35,6 +35,12 @@ import Discover from "./Discover";
 import { styled } from "@mui/material/styles";
 import theme from "../Themes/theme.jsx"; // Replace with the path to your theme file
 import Swarm from "./Swarm";
+import { useDispatch } from "react-redux";
+import {
+  setShowSwarm,
+  setShowDiscover,
+  setShowPosts,
+} from "../../redux/userInfoSlice"; //
 
 const drawerWidth = 240;
 
@@ -71,7 +77,7 @@ export default function ClippedDrawer() {
   const [showStartBuzz, setShowStartBuzz] = React.useState(false);
   const [showDiscover, setShowDiscover] = React.useState(false);
   const [showSwarm, setShowSwarm] = React.useState(false);
-
+  const dispatch = useDispatch();
   //create buzz
   const handleStartBuzz = () => {
     setShowStartBuzz(true);
@@ -261,6 +267,7 @@ export default function ClippedDrawer() {
                     key={hiveName.id}
                     id={hiveName.id}
                     onClick={() => {
+                      dispatch(setShowPosts());
                       handleHiveClick(hiveName.id);
                     }}
                   >

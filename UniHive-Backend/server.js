@@ -226,6 +226,7 @@ io.on("connection", (socket) => {
       };
       console.log(data);
       console.log(currentUser.name);
+      
       //If not username is found then an error will occur
       if (currentUser.name === null) {
         console.log("Incorrect credentials");
@@ -587,20 +588,22 @@ const groupIds = groupTagData
 
   /////////////////Get COMMENTS/////////////////////////
   //let allComments;
-  let groupostids;
-  socket.on("getPostComments", async () => {
-    //groupostids=await post.findAll({where:{groupId:clickedhive}})
-    const { data: groupostids, error } = await supabase
+  let groupostids; // Declare the variable
+
+socket.on("getPostComments", async () => {
+  try {
+    // Query for post objects based on clickedhive
+    const { data, error } = await supabase
       .from("Posts")
       .select("*")
       .eq("groupId", clickedhive);
 
     if (error) {
       console.error(error);
-    } else {
-      // Now you can work with the groupostids array
+      return; // Exit early if there's an error
     }
-    //Gets all the comments of the clicked hive
+
+    groupostids = data; // Assign the query result to the variable
 
     const allComments = [];
 
@@ -619,17 +622,13 @@ const groupIds = groupTagData
       }
     }
 
-    /*
-  // Fetch comments for each post
-  for (const postObj of groupostids) {
-    const comments = await comment.findAll({ where: { postId: postObj.id } });
-    allComments.push(...comments);
-  }
-   // allComments=await comment.findAll({where:{postId:groupostids.id}})
-*/
-    socket.emit("receivePostComments", allComments); //emits the comments after the promise is finish executing
+    // Emit the comments after processing
+    socket.emit("receivePostComments", allComments);
     console.log(allComments);
-  });
+  } catch (e) {
+    console.error("An error occurred:", e);
+  }
+});
 
    
 
@@ -885,7 +884,17 @@ socket.on("joinGroup",async (groupID)=>{
 
 
 
+socket.on("getUserOfComment", async (userid)=>{
 
+  const { data, error } = await supabase
+  .from("User")
+  .select("name")
+  .eq("id", userid);
+
+  console.log("This is the comment username: "+data);
+  socket.broadcast.emit("returnCommentuser",data);
+
+})
 
 
 
