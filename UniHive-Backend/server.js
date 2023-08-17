@@ -258,7 +258,10 @@ io.on("connection", (socket) => {
  }
 
  // Extract group IDs from groupTagData
- const groupIds = groupTagData.map((groupTag) => groupTag.groupId);
+// Extract group IDs from groupTagData and filter out null values
+const groupIds = groupTagData
+  .map((groupTag) => groupTag.groupId)
+  .filter((groupId) => typeof groupId === 'number' && !isNaN(groupId));
 
  // Fetch all groups associated with the extracted group IDs
  const { data: groupsData, error: groupsError } = await supabase
@@ -266,6 +269,7 @@ io.on("connection", (socket) => {
    .select("*")
    .in("id", groupIds);
 
+   console.log("These are the groups found: "+groupsData);
  if (groupsError) {
    console.error("Error fetching Groups data:", groupsError);
    return;
@@ -827,6 +831,54 @@ socket.on("joinGroup",async (groupID)=>{
   ])
   .select()
 
+
+  try {
+    // Find all group IDs associated with the current user in GroupTag table
+    const { data: groupTagData, error: groupTagError } = await supabase
+      .from("GroupTag")
+      .select("groupId")
+      .eq("userId", currentUser.id);
+  
+    if (groupTagError) {
+      console.error("Error fetching GroupTag data:", groupTagError);
+      return;
+    }
+  
+    if (groupTagData.length === 0) {
+      console.log("No groups found for the current user in GroupTag.");
+      return;
+    }
+  
+    // Extract group IDs from groupTagData
+    const groupIds = groupTagData
+  .map((groupTag) => groupTag.groupId)
+  .filter((groupId) => typeof groupId === 'number' && !isNaN(groupId));
+  
+    // Fetch all groups associated with the extracted group IDs
+    const { data: groupsData, error: groupsError } = await supabase
+      .from("Groups")
+      .select("*")
+      .in("id", groupIds);
+  
+    if (groupsError) {
+      console.error("Error fetching Groups data:", groupsError);
+      return;
+    }
+  
+    if (groupsData.length === 0) {
+      console.log("No groups found for the current user.");
+      return;
+    }
+  
+    currentGroup = groupsData;
+  
+    console.log("This is the currentGroup:", currentGroup);
+    socket.broadcast.emit("loadData", currentGroup);
+  } catch (error) {
+    console.error("Fetch data error:", error);
+  }
+  //socket.broadcast.emit("loadData", currentGroup);
+ 
   console.log("Successfully created: "+data); 
 
 })

@@ -90,7 +90,7 @@ function StartBuzz({ open, onClose }) {
   };
 
   return (
-    <Dialog open={open} onClose={handleCloseModal} maxWidth="xs">
+    <Dialog open={open} onClose={handleCloseModal} maxWidth="md">
       <DialogTitle>Choose a Name</DialogTitle>
       <DialogContent>
         <Autocomplete
@@ -100,7 +100,7 @@ function StartBuzz({ open, onClose }) {
           value={selectedName}
           onChange={(event, newValue) => setSelectedName(newValue)}
           renderInput={(params) => (
-            <TextField {...params} label="Select a Name" variant="outlined" />
+            <TextField {...params} label="Select a Name" variant="standard" />
           )}
         />
       </DialogContent>
