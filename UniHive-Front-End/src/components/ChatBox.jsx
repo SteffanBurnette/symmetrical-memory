@@ -22,6 +22,12 @@ function ChatBox({ open, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loadmsg, setLoadMsg] = useState([]);
+  const [callEnded, setCallEnded] = useState(false);
+
+  const handleEndCall = () => {
+    // ... Your existing code ...
+    setCallEnded(true);
+  };
 
   const handleInputChange = (event) => {
     setNewMessage(event.target.value);
@@ -62,7 +68,7 @@ socket.on("conversation",(data)=>{
   return (
     <Paper style={styles.container} open={open} onClose={handleClose}>
       <div>
-        <JoinVideoButton />
+        <JoinVideoButton callEnded={callEnded} onCallEnded={handleEndCall} />
         <Divider />
       </div>
       <div style={styles.chatContainer}>
